@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Predictor Pro | Ultimate Analysis Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/phosphor-icons/1.4.2/css/phosphor.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --bg-color: #0a101f;
+            --card-color: rgba(16, 25, 53, 0.7);
+            --border-color: rgba(67, 90, 126, 0.4);
+            --primary-blue: #3b82f6;
+            --glow-blue: rgba(59, 130, 246, 0.5);
+            --primary-green: #22c55e;
+            --glow-green: rgba(34, 197, 94, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='1200' fill='none'%3e%3crect width='1200' height='1200' fill='%230a101f' rx='3'/%3e%3cg opacity='.5'%3e%3cg opacity='.5'%3e%3cpath fill='%231e293b' d='M600.709 736.5c-75.454 0-136.621-61.167-136.621-136.62 0-75.454 61.167-136.621 136.621-136.621 75.453 0 136.62 61.167 136.62 136.621 0 75.453-61.167 136.62-136.62 136.62Z'/%3e%3cpath stroke='%23334155' stroke-width='2.418' d='M600.709 736.5c-75.454 0-136.621-61.167-136.621-136.62 0-75.454 61.167-136.621 136.621-136.621 75.453 0 136.62 61.167 136.62 136.621 0 75.453-61.167 136.62-136.62 136.62Z'/%3e%3c/g%3e%3cpath stroke='url(%23a)' stroke-width='2.418' d='M0-1.209h553.581' transform='scale(1 -1) rotate(45 1163.11 91.165)'/%3e%3cpath stroke='url(%23b)' stroke-width='2.418' d='M404.846 598.671h391.726'/%3e%3cpath stroke='url(%23c)' stroke-width='2.418' d='M599.5 795.742V404.017'/%3e%3cpath stroke='url(%23d)' stroke-width='2.418' d='m795.717 796.597-391.441-391.44'/%3e%3cpath fill='%23475569' d='M600.709 656.704c-31.384 0-56.825-25.441-56.825-56.824 0-31.384 25.441-56.825 56.825-56.825 31.383 0 56.824 25.441 56.824 56.825 0 31.383-25.441 56.824-56.824 56.824Z'/%3e%3cg clip-path='url(%23e)'%3e%3cpath fill='%2394a3b8' fill-rule='evenodd' d='M616.426 586.58h-31.434v16.176l3.553-3.554.531-.531h9.068l.074-.074 8.463-8.463h2.565l7.18 7.181V586.58Zm-15.715 14.654 3.698 3.699 1.283 1.282-2.565 2.565-1.282-1.283-5.2-5.199h-6.066l-5.514 5.514-.073.073v2.876a2.418 2.418 0 0 0 2.418 2.418h26.598a2.418 2.418 0 0 0 2.418-2.418v-8.317l-8.463-8.463-7.181 7.181-.071.072Zm-19.347 5.442v4.085a6.045 6.045 0 0 0 6.046 6.045h26.598a6.044 6.044 0 0 0 6.045-6.045v-7.108l1.356-1.355-1.282-1.283-.074-.073v-17.989h-38.689v23.43l-.146.146.146.147Z' clip-rule='evenodd'/%3e%3c/g%3e%3cpath stroke='%23334155' stroke-width='2.418' d='M600.709 656.704c-31.384 0-56.825-25.441-56.825-56.824 0-31.384 25.441-56.825 56.825-56.825 31.383 0 56.824 25.441 56.824 56.825 0 31.383-25.441 56.824-56.824 56.824Z'/%3e%3c/g%3e%3cdefs%3e%3clinearGradient id='a' x1='554.061' x2='-.48' y1='.083' y2='.087' gradientUnits='userSpaceOnUse'%3e%3cstop stop-color='%23334155' stop-opacity='0'/%3e%3cstop offset='.208' stop-color='%23334155'/%3e%3cstop offset='.792' stop-color='%23334155'/%3e%3cstop offset='1' stop-color='%23334155' stop-opacity='0'/%3e%3c/linearGradient%3e%3clinearGradient id='b' x1='796.912' x2='404.507' y1='599.963' y2='599.965' gradientUnits='userSpaceOnUse'%3e%3cstop stop-color='%23334155' stop-opacity='0'/%3e%3cstop offset='.208' stop-color='%23334155'/%3e%3cstop offset='.792' stop-color='%23334155'/%3e%3cstop offset='1' stop-color='%23334155' stop-opacity='0'/%3e%3c/linearGradient%3e%3clinearGradient id='c' x1='600.792' x2='600.794' y1='403.677' y2='796.082' gradientUnits='userSpaceOnUse'%3e%3cstop stop-color='%23334155' stop-opacity='0'/%3e%3cstop offset='.208' stop-color='%23334155'/%3e%3cstop offset='.792' stop-color='%23334155'/%3e%3cstop offset='1' stop-color='%23334155' stop-opacity='0'/%3e%3c/linearGradient%3e%3clinearGradient id='d' x1='404.85' x2='796.972' y1='403.903' y2='796.02' gradientUnits='userSpaceOnUse'%3e%3cstop stop-color='%23334155' stop-opacity='0'/%3e%3cstop offset='.208' stop-color='%23334155'/%3e%3cstop offset='.792' stop-color='%23334155'/%3e%3cstop offset='1' stop-color='%23334155' stop-opacity='0'/%3e%3c/linearGradient%3e%3cclipPath id='e'%3e%3cpath fill='%23fff' d='M581.364 580.535h38.689v38.689h-38.689z'/%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e");
+            background-size: auto;
+            background-position: center;
+            background-attachment: fixed;
+            color: #e2e8f0;
+        }
+
+        .header-bg {
+            background-image:
+                linear-gradient(to bottom, rgba(10, 16, 31, 0.5) 0%, var(--bg-color) 100%),
+                url('https://images.unsplash.com/photo-1599548622153-f05953028b10?q=80&w=2070&auto-format&fit=crop');
+            background-size: cover;
+            background-position: center 40%;
+        }
+
+        .main-card-container {
+            width: 100%;
+            max-width: 1536px; /* Equivalent to screen-2xl */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .main-card {
+            background-color: var(--card-color);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .aurora-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(34, 197, 94, 0.15) 0%, transparent 40%);
+            z-index: -1;
+            transition: opacity 0.5s;
+        }
+
+        .tab-active { color: var(--primary-blue); position: relative; }
+        .tab-active::after {
+            content: ''; position: absolute; bottom: -6px; left: 0; right: 0; height: 3px;
+            background: var(--primary-blue); border-radius: 2px; animation: slideIn 0.3s ease forwards;
+        }
+
+        .team-card { 
+            background-color: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-color);
+            transition: all 0.3s ease; transform-style: preserve-3d; position: relative;
+        }
+        .team-card:hover { transform: translateY(-8px) rotateX(5deg); box-shadow: 0 12px 24px rgba(0,0,0,0.3); border-color: var(--primary-blue); }
+        .team-card.selected { 
+            border-color: var(--primary-blue); box-shadow: 0 0 25px var(--glow-blue);
+            transform: translateY(-8px) scale(1.05);
+        }
+        .team-card .checkmark {
+            position: absolute; top: 8px; right: 8px; font-size: 1.5rem; color: var(--primary-green);
+            transform: scale(0); transition: transform 0.3s ease-out;
+        }
+        .team-card.selected .checkmark { transform: scale(1); }
+
+        .custom-btn {
+            background-image: linear-gradient(to right, #3b82f6, #60a5fa);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: all 0.3s ease;
+        }
+        .custom-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5); }
+        .custom-btn:disabled { background: #475569; box-shadow: none; cursor: not-allowed; transform: none; }
+
+        .fade-in { animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .status-banner { position: fixed; top: 0; left: 0; right: 0; padding: 8px; text-align: center; font-size: 0.9rem; font-weight: 500; z-index: 999; transition: all 0.5s ease; }
+        
+        .animated-trophy { animation: pulse 2s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        .animated-text-gradient {
+            background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6, #60a5fa);
+            background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: gradient-flow 5s ease infinite;
+        }
+        @keyframes gradient-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        @keyframes slideIn { from { width: 0; left: 50%; transform: translateX(-50%); } to { width: 100%; left: 0; transform: translateX(0); } }
+        
+        .custom-input-group {
+            background: rgba(10, 16, 31, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .custom-input-group:focus-within {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 10px var(--glow-blue);
+        }
+        .custom-input-group i { color: #94a3b8; }
+        .custom-input-group input, .custom-input-group select {
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+            padding-left: 10px;
+            color: #e2e8f0;
+        }
+        .custom-input-group select option { background-color: var(--bg-color); }
+        
+    </style>
+</head>
+<body class="text-slate-200">
+
+    <div id="status-banner" class="status-banner bg-slate-700 text-white">Connecting to backend...</div>
+    
+    <header class="header-bg pt-20 pb-20 text-center">
+        <div class="inline-block p-4 bg-white/10 backdrop-blur-sm rounded-full mb-4 animated-trophy">
+            <i class="ph-trophy text-5xl text-amber-300"></i>
+        </div>
+        <h1 class="text-5xl md:text-6xl font-extrabold animated-text-gradient">Cricket Predictor Pro</h1>
+        <p class="mt-3 text-lg text-slate-300">The Ultimate T20 Prediction & Analysis Engine</p>
+    </header>
+
+    <div class="container mx-auto p-4 -mt-20">
+        
+        <div id="main-app-container" class="main-card-container main-card p-6 sm:p-8">
+            <div class="aurora-bg"></div>
+            <section id="step1" class="fade-in">
+                <h2 class="text-2xl font-bold mb-5 flex items-center gap-3"><i class="ph-flag-checkered text-3xl text-blue-400"></i>Match Setup</h2>
+                <div id="team-selection-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5"></div>
+            </section>
+
+            <section id="step2" class="fade-in mt-10 hidden">
+                 <h2 class="text-2xl font-bold mb-5 flex items-center gap-3"><i class="ph-users-three text-3xl text-blue-400"></i>Select Playing XI</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div id="team1-squad" class="p-4 bg-slate-800/50 rounded-lg border border-[var(--border-color)]"></div>
+                    <div id="team2-squad" class="p-4 bg-slate-800/50 rounded-lg border border-[var(--border-color)]"></div>
+                </div>
+            </section>
+            
+            <section id="step3" class="fade-in mt-10 hidden">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3"><i class="ph-chart-line text-3xl text-blue-400"></i>Predictor Dashboard</h2>
+                <div class="mb-8 flex flex-wrap justify-center gap-x-8 gap-y-4 text-lg font-semibold text-slate-400">
+                    <button data-tab="score-predictor" class="predictor-tab tab-active flex items-center gap-2 pb-2 transition-colors hover:text-blue-400"><i class="ph-chart-bar"></i>Score</button>
+                    <button data-tab="win-probability" class="predictor-tab flex items-center gap-2 pb-2 transition-colors hover:text-blue-400"><i class="ph-percent"></i>Win %</button>
+                    <button data-tab="run-rate" class="predictor-tab flex items-center gap-2 pb-2 transition-colors hover:text-blue-400"><i class="ph-chart-line-up"></i>Run Rate</button>
+                    <button data-tab="form-comparison" class="predictor-tab flex items-center gap-2 pb-2 transition-colors hover:text-blue-400"><i class="ph-star"></i>Form</button>
+                    <button data-tab="dls-calculator" class="predictor-tab flex items-center gap-2 pb-2 transition-colors hover:text-blue-400"><i class="ph-cloud-rain"></i>DLS</button>
+                </div>
+
+                <div id="tab-content" class="p-4 bg-slate-800/30 rounded-lg border border-[var(--border-color)] min-h-[450px]">
+                    
+                    <div id="score-predictor" class="tab-pane fade-in">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            <div class="custom-input-group"><i class="ph-number-circle-one"></i><input type="number" id="sp-score" placeholder="Current Runs"></div>
+                            <div class="custom-input-group"><i class="ph-user-circle-minus"></i><input type="number" id="sp-wickets" max="10" placeholder="Wickets Lost"></div>
+                            <div class="custom-input-group"><i class="ph-clock"></i><input type="number" step="0.1" id="sp-overs" placeholder="Overs Completed"></div>
+                            <div class="custom-input-group"><i class="ph-stadium"></i><select id="sp-venue"></select></div>
+                            <div class="custom-input-group"><i class="ph-moped"></i><select id="sp-pitch"></select></div>
+                            <div class="custom-input-group"><i class="ph-sun"></i><select id="sp-weather"></select></div>
+                        </div>
+                        <div class="text-center mt-6"><button id="predict-score-btn" class="custom-btn text-white font-bold py-3 px-8 rounded-lg">Predict Score</button></div>
+                        <div id="score-prediction-output" class="mt-8 hidden">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-6">
+                                <div class="bg-slate-800/50 p-3 rounded-lg border border-[var(--border-color)]"><p class="text-sm text-slate-400">Team Form</p><p id="sp-team-form" class="text-2xl font-bold">8.5/10</p></div>
+                                <div class="bg-slate-800/50 p-3 rounded-lg border border-[var(--border-color)]"><p class="text-sm text-slate-400">Venue Avg</p><p id="sp-venue-avg" class="text-2xl font-bold">175</p></div>
+                                <div class="bg-slate-800/50 p-3 rounded-lg border border-[var(--border-color)]"><p class="text-sm text-slate-400">Boundary</p><p id="sp-boundary" class="text-2xl font-bold">Medium</p></div>
+                                <div class="bg-slate-800/50 p-3 rounded-lg border border-[var(--border-color)]"><p class="text-sm text-slate-400">Weather Impact</p><p id="sp-weather-impact" class="text-2xl font-bold">100%</p></div>
+                            </div>
+                            <div class="p-6 rounded-lg bg-gradient-to-br from-blue-900/30 to-green-900/30">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                                    <div class="bg-slate-900/50 p-4 rounded-lg border border-red-500/50"><p class="text-sm text-slate-400">Minimum</p><p id="sp-low" class="text-5xl font-bold text-red-400">190</p></div>
+                                    <div class="bg-slate-900/50 p-4 rounded-lg border-2 border-green-400 shadow-lg shadow-green-500/20"><p class="text-sm text-slate-400">Average</p><p id="sp-avg" class="text-5xl font-bold text-green-400">207</p></div>
+                                    <div class="bg-slate-900/50 p-4 rounded-lg border border-blue-500/50"><p class="text-sm text-slate-400">Maximum</p><p id="sp-high" class="text-5xl font-bold text-blue-400">224</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="win-probability" class="tab-pane hidden fade-in">
+                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            <div class="custom-input-group"><i class="ph-target"></i><input type="number" id="wp-target" placeholder="Target Score"></div>
+                            <div class="custom-input-group"><i class="ph-number-circle-one"></i><input type="number" id="wp-score" placeholder="Current Score"></div>
+                            <div class="custom-input-group"><i class="ph-user-circle-minus"></i><input type="number" id="wp-wickets" max="10" placeholder="Wickets Lost"></div>
+                            <div class="custom-input-group"><i class="ph-clock"></i><input type="number" step="0.1" id="wp-overs" placeholder="Overs Completed"></div>
+                            <div class="custom-input-group"><i class="ph-moped"></i><select id="wp-pitch"></select></div>
+                            <div class="custom-input-group"><i class="ph-sun"></i><select id="wp-weather"></select></div>
+                         </div>
+                         <div class="text-center mt-6"><button id="calculate-wp-btn" class="custom-btn text-white font-bold py-3 px-8 rounded-lg">Calculate Win %</button></div>
+                         <div id="win-probability-output" class="mt-8 grid md:grid-cols-2 gap-8 items-center hidden">
+                             <div class="relative w-64 h-64 mx-auto">
+                                <canvas id="win-probability-chart"></canvas>
+                                <div id="wp-percentage" class="absolute inset-0 flex items-center justify-center text-6xl font-extrabold text-green-400"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div class="bg-slate-800/50 p-4 rounded-lg"><p class="text-sm text-slate-400">Runs Needed</p><p id="wp-runs-needed" class="text-3xl font-bold text-red-400">87</p></div>
+                                <div class="bg-slate-800/50 p-4 rounded-lg"><p class="text-sm text-slate-400">Balls Left</p><p id="wp-balls-left" class="text-3xl font-bold">60</p></div>
+                                <div class="bg-slate-800/50 p-4 rounded-lg"><p class="text-sm text-slate-400">Current RR</p><p id="wp-crr" class="text-3xl font-bold">7.80</p></div>
+                                <div class="bg-slate-800/50 p-4 rounded-lg"><p class="text-sm text-slate-400">Required RR</p><p id="wp-rrr" class="text-3xl font-bold text-amber-400">8.70</p></div>
+                            </div>
+                         </div>
+                    </div>
+
+                    <div id="run-rate" class="tab-pane hidden fade-in">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                            <div class="custom-input-group"><i class="ph-number-circle-one"></i><input type="number" id="rrt-score" placeholder="Current Runs"></div>
+                            <div class="custom-input-group"><i class="ph-clock"></i><input type="number" step="0.1" id="rrt-overs" placeholder="Overs Completed"></div>
+                            <div class="custom-input-group"><i class="ph-target"></i><input type="number" id="rrt-target-score" placeholder="Target Score (Optional)"></div>
+                        </div>
+                         <div class="text-center mt-6"><button id="calculate-rrt-btn" class="custom-btn text-white font-bold py-3 px-8 rounded-lg">Plot Trajectory</button></div>
+                        <div id="run-rate-output" class="mt-6 hidden"><canvas id="run-rate-chart"></canvas></div>
+                    </div>
+
+                    <div id="form-comparison" class="tab-pane hidden fade-in">
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-center mb-6">
+                            <div id="form-team1-card" class="bg-green-900/30 p-4 rounded-lg border-2 border-green-500/50"></div>
+                            <div id="form-team2-card" class="bg-blue-900/30 p-4 rounded-lg border-2 border-blue-500/50"></div>
+                         </div>
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <div class="max-w-md mx-auto"><canvas id="form-comparison-chart"></canvas></div>
+                            <div id="form-details-comparison" class="space-y-4"></div>
+                         </div>
+                    </div>
+
+                    <div id="dls-calculator" class="tab-pane hidden fade-in">
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div class="p-5 border border-[var(--border-color)] rounded-lg bg-slate-900/40 space-y-4">
+                                <h4 class="font-bold text-lg flex items-center gap-2"><i class="ph-t-shirt"></i>Team 1 (Batting First)</h4>
+                                <div class="custom-input-group"><i class="ph-number-square-one"></i><input type="number" id="dls-t1-score" placeholder="Final Score"></div>
+                                <div class="custom-input-group"><i class="ph-clock"></i><input type="number" id="dls-t1-overs" value="20" max="20" min="1" placeholder="Overs Completed"></div>
+                             </div>
+                             <div class="p-5 border border-[var(--border-color)] rounded-lg bg-slate-900/40 space-y-4">
+                                <h4 class="font-bold text-lg flex items-center gap-2"><i class="ph-t-shirt"></i>Team 2 (Chasing)</h4>
+                                <div class="custom-input-group"><i class="ph-clock-afternoon"></i><input type="number" id="dls-t2-overs" placeholder="Revised Overs"></div>
+                                <div class="custom-input-group"><i class="ph-user-circle-minus"></i><input type="number" id="dls-t2-wickets" placeholder="Wickets at Stoppage" max="10" min="0"></div>
+                             </div>
+                         </div>
+                         <div class="text-center mt-6"><button id="calculate-dls-btn" class="custom-btn text-white font-bold py-3 px-8 text-lg rounded-lg">Calculate DLS Target</button></div>
+                         <div id="dls-output" class="mt-6 p-6 rounded-lg bg-gradient-to-br from-red-900/30 to-amber-900/30 text-center hidden">
+                             <p class="text-slate-300">DLS Adjusted Target</p>
+                             <p id="dls-target" class="text-7xl font-extrabold text-red-400 my-2">157</p>
+                             <p id="dls-overs-info" class="text-slate-300">in <span id="dls-revised-overs">12.3</span> overs</p>
+                         </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
+        // Data Store
+        
+        const API_BASE =
+  window.location.hostname === "localhost" || window.location.hostname === ""
+    ? "http://127.0.0.1:5000"
+    : window.location.origin;
+
+
+let isBackendConnected = false;
+
+        const cricketData = {
+            teams: [
+                { name: "India", flag: "🇮🇳", players: [
+                    { name: 'Rohit Sharma', role: 'Batsman', form: 9.2 }, { name: 'Virat Kohli', role: 'Batsman', form: 9.5 }, { name: 'Shubman Gill', role: 'Batsman', form: 8.8 },
+                    { name: 'Suryakumar Yadav', role: 'Batsman', form: 9.0 }, { name: 'Rishabh Pant', role: 'WK-Batsman', form: 8.5 }, { name: 'Hardik Pandya', role: 'All-Rounder', form: 8.7 },
+                    { name: 'Ravindra Jadeja', role: 'All-Rounder', form: 8.3 }, { name: 'Axar Patel', role: 'All-Rounder', form: 7.5 }, { name: 'Jasprit Bumrah', role: 'Bowler', form: 9.8 },
+                    { name: 'Mohammed Shami', role: 'Bowler', form: 9.1 }, { name: 'Kuldeep Yadav', role: 'Bowler', form: 8.4 }, { name: 'Yuzvendra Chahal', role: 'Bowler', form: 8.0 },
+                    { name: 'KL Rahul', role: 'Batsman', form: 7.8 }, { name: 'Ishan Kishan', role: 'WK-Batsman', form: 7.2 }, { name: 'Arshdeep Singh', role: 'Bowler', form: 7.6 }
+                ]},
+                { name: "Australia", flag: "🇦🇺", players: [
+                    { name: 'David Warner', role: 'Batsman', form: 8.9 }, { name: 'Steve Smith', role: 'Batsman', form: 9.3 }, { name: 'Mitchell Marsh', role: 'All-Rounder', form: 8.6 },
+                    { name: 'Glenn Maxwell', role: 'All-Rounder', form: 8.8 }, { name: 'Marcus Stoinis', role: 'All-Rounder', form: 7.9 }, { name: 'Josh Inglis', role: 'WK-Batsman', form: 8.2 },
+                    { name: 'Matthew Wade', role: 'WK-Batsman', form: 7.5 }, { name: 'Pat Cummins', role: 'Bowler', form: 9.4 }, { name: 'Mitchell Starc', role: 'Bowler', form: 9.2 },
+                    { name: 'Josh Hazlewood', role: 'Bowler', form: 9.0 }, { name: 'Adam Zampa', role: 'Bowler', form: 8.7 }, { name: 'Nathan Ellis', role: 'Bowler', form: 8.1 },
+                    { name: 'Travis Head', role: 'Batsman', form: 8.5 }, { name: 'Tim David', role: 'Batsman', form: 7.8 }, { name: 'Ashton Agar', role: 'All-Rounder', form: 7.3 }
+                ]},
+                { name: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", players: [
+                    { name: 'Jos Buttler', role: 'WK-Batsman', form: 9.1 }, { name: 'Jason Roy', role: 'Batsman', form: 8.4 }, { name: 'Dawid Malan', role: 'Batsman', form: 8.7 },
+                    { name: 'Ben Stokes', role: 'All-Rounder', form: 9.0 }, { name: 'Moeen Ali', role: 'All-Rounder', form: 8.3 }, { name: 'Liam Livingstone', role: 'All-Rounder', form: 8.5 },
+                    { name: 'Sam Curran', role: 'All-Rounder', form: 8.1 }, { name: 'Jofra Archer', role: 'Bowler', form: 9.3 }, { name: 'Mark Wood', role: 'Bowler', form: 8.9 },
+                    { name: 'Adil Rashid', role: 'Bowler', form: 8.8 }, { name: 'Chris Woakes', role: 'Bowler', form: 8.6 }, { name: 'Reece Topley', role: 'Bowler', form: 8.2 },
+                    { name: 'Phil Salt', role: 'Batsman', form: 7.9 }, { name: 'Jonny Bairstow', role: 'WK-Batsman', form: 7.7 }, { name: 'Tom Curran', role: 'Bowler', form: 7.4 }
+                ]},
+                { name: "Pakistan", flag: "🇵🇰", players: [
+                    { name: 'Babar Azam', role: 'Batsman', form: 9.6 }, { name: 'Mohammad Rizwan', role: 'WK-Batsman', form: 9.2 }, { name: 'Fakhar Zaman', role: 'Batsman', form: 8.5 },
+                    { name: 'Iftikhar Ahmed', role: 'All-Rounder', form: 8.0 }, { name: 'Shadab Khan', role: 'All-Rounder', form: 8.4 }, { name: 'Mohammad Nawaz', role: 'All-Rounder', form: 7.8 },
+                    { name: 'Shaheen Afridi', role: 'Bowler', form: 9.5 }, { name: 'Haris Rauf', role: 'Bowler', form: 9.0 }, { name: 'Naseem Shah', role: 'Bowler', form: 8.7 },
+                    { name: 'Mohammad Wasim', role: 'Bowler', form: 8.2 }, { name: 'Usama Mir', role: 'Bowler', form: 7.9 }, { name: 'Mohammad Hafeez', role: 'All-Rounder', form: 8.3 },
+                    { name: 'Sarfaraz Ahmed', role: 'WK-Batsman', form: 7.6 }, { name: 'Asif Ali', role: 'Batsman', form: 7.4 }, { name: 'Faheem Ashraf', role: 'All-Rounder', form: 7.2 }
+                ]},
+                { name: "South Africa", flag: "🇿🇦", players: [
+                    { name: 'Quinton de Kock', role: 'WK-Batsman', form: 9.0 }, { name: 'Temba Bavuma', role: 'Batsman', form: 8.3 }, { name: 'Aiden Markram', role: 'Batsman', form: 8.7 },
+                    { name: 'Rassie van der Dussen', role: 'Batsman', form: 8.5 }, { name: 'David Miller', role: 'Batsman', form: 8.9 }, { name: 'Heinrich Klaasen', role: 'WK-Batsman', form: 8.6 },
+                    { name: 'Wayne Parnell', role: 'All-Rounder', form: 8.1 }, { name: 'Keshav Maharaj', role: 'Bowler', form: 8.4 }, { name: 'Kagiso Rabada', role: 'Bowler', form: 9.4 },
+                    { name: 'Anrich Nortje', role: 'Bowler', form: 9.1 }, { name: 'Lungi Ngidi', role: 'Bowler', form: 8.8 }, { name: 'Tabraiz Shamsi', role: 'Bowler', form: 8.5 },
+                    { name: 'Reeza Hendricks', role: 'Batsman', form: 7.8 }, { name: 'Dwaine Pretorius', role: 'All-Rounder', form: 7.6 }, { name: 'Marco Jansen', role: 'All-Rounder', form: 7.9 }
+                ]},
+                { name: "New Zealand", flag: "🇳🇿", players: [
+                    { name: 'Kane Williamson', role: 'Batsman', form: 9.4 }, { name: 'Devon Conway', role: 'WK-Batsman', form: 8.8 }, { name: 'Finn Allen', role: 'Batsman', form: 8.2 },
+                    { name: 'Glenn Phillips', role: 'All-Rounder', form: 8.6 }, { name: 'Daryl Mitchell', role: 'All-Rounder', form: 8.5 }, { name: 'James Neesham', role: 'All-Rounder', form: 8.0 },
+                    { name: 'Mitchell Santner', role: 'All-Rounder', form: 7.9 }, { name: 'Trent Boult', role: 'Bowler', form: 9.3 }, { name: 'Tim Southee', role: 'Bowler', form: 9.0 },
+                    { name: 'Lockie Ferguson', role: 'Bowler', form: 8.9 }, { name: 'Ish Sodhi', role: 'Bowler', form: 8.4 }, { name: 'Adam Milne', role: 'Bowler', form: 8.1 },
+                    { name: 'Tom Latham', role: 'WK-Batsman', form: 8.3 }, { name: 'Mark Chapman', role: 'Batsman', form: 7.7 }, { name: 'Michael Bracewell', role: 'All-Rounder', form: 7.5 }
+                ]},
+                { name: "West Indies", flag: "🇧🇧", players: [
+                    { name: 'Nicholas Pooran', role: 'WK-Batsman', form: 8.9 }, { name: 'Brandon King', role: 'Batsman', form: 8.3 }, { name: 'Kyle Mayers', role: 'All-Rounder', form: 8.6 },
+                    { name: 'Rovman Powell', role: 'All-Rounder', form: 8.4 }, { name: 'Andre Russell', role: 'All-Rounder', form: 9.0 }, { name: 'Jason Holder', role: 'All-Rounder', form: 8.7 },
+                    { name: 'Romario Shepherd', role: 'All-Rounder', form: 7.8 }, { name: 'Alzarri Joseph', role: 'Bowler', form: 8.8 }, { name: 'Akeal Hosein', role: 'Bowler', form: 8.5 },
+                    { name: 'Obed McCoy', role: 'Bowler', form: 8.2 }, { name: 'Sheldon Cottrell', role: 'Bowler', form: 8.0 }, { name: 'Hayden Walsh Jr', role: 'Bowler', form: 7.9 },
+                    { name: 'Shai Hope', role: 'WK-Batsman', form: 8.1 }, { name: 'Shimron Hetmyer', role: 'Batsman', form: 7.9 }, { name: 'Odean Smith', role: 'All-Rounder', form: 7.4 }
+                ]},
+                { name: "Sri Lanka", flag: "🇱🇰", players: [
+                    { name: 'Pathum Nissanka', role: 'Batsman', form: 8.4 }, { name: 'Kusal Mendis', role: 'WK-Batsman', form: 8.7 }, { name: 'Charith Asalanka', role: 'All-Rounder', form: 8.3 },
+                    { name: 'Wanindu Hasaranga', role: 'All-Rounder', form: 9.2 }, { name: 'Dasun Shanaka', role: 'All-Rounder', form: 8.1 }, { name: 'Dhananjaya de Silva', role: 'All-Rounder', form: 8.0 },
+                    { name: 'Maheesh Theekshana', role: 'Bowler', form: 8.9 }, { name: 'Matheesha Pathirana', role: 'Bowler', form: 8.6 }, { name: 'Dilshan Madushanka', role: 'Bowler', form: 8.5 },
+                    { name: 'Dushmantha Chameera', role: 'Bowler', form: 8.8 }, { name: 'Kasun Rajitha', role: 'Bowler', form: 8.2 }, { name: 'Chamika Karunaratne', role: 'All-Rounder', form: 7.8 },
+                    { name: 'Dinesh Chandimal', role: 'WK-Batsman', form: 8.0 }, { name: 'Bhanuka Rajapaksa', role: 'Batsman', form: 7.6 }, { name: 'Lahiru Kumara', role: 'Bowler', form: 8.1 }
+                ]},
+                { name: "Bangladesh", flag: "🇧🇩", players: [
+                    { name: 'Litton Das', role: 'WK-Batsman', form: 8.5 }, { name: 'Najmul Hossain Shanto', role: 'Batsman', form: 8.3 }, { name: 'Towhid Hridoy', role: 'Batsman', form: 8.0 },
+                    { name: 'Shakib Al Hasan', role: 'All-Rounder', form: 9.1 }, { name: 'Mahmudullah', role: 'All-Rounder', form: 8.2 }, { name: 'Mehidy Hasan Miraz', role: 'All-Rounder', form: 8.4 },
+                    { name: 'Afif Hossain', role: 'All-Rounder', form: 7.7 }, { name: 'Mustafizur Rahman', role: 'Bowler', form: 9.0 }, { name: 'Taskin Ahmed', role: 'Bowler', form: 8.7 },
+                    { name: 'Shoriful Islam', role: 'Bowler', form: 8.3 }, { name: 'Nasum Ahmed', role: 'Bowler', form: 8.1 }, { name: 'Hasan Mahmud', role: 'Bowler', form: 7.9 },
+                    { name: 'Mushfiqur Rahim', role: 'WK-Batsman', form: 8.6 }, { name: 'Soumya Sarkar', role: 'All-Rounder', form: 7.5 }, { name: 'Tanzim Hasan Sakib', role: 'Bowler', form: 7.6 }
+                ]},
+                { name: "Afghanistan", flag: "🇦🇫", players: [
+                    { name: 'Rahmanullah Gurbaz', role: 'WK-Batsman', form: 8.6 }, { name: 'Ibrahim Zadran', role: 'Batsman', form: 8.4 }, { name: 'Hazratullah Zazai', role: 'Batsman', form: 7.9 },
+                    { name: 'Mohammad Nabi', role: 'All-Rounder', form: 8.8 }, { name: 'Gulbadin Naib', role: 'All-Rounder', form: 8.0 }, { name: 'Azmatullah Omarzai', role: 'All-Rounder', form: 8.2 },
+                    { name: 'Karim Janat', role: 'All-Rounder', form: 7.6 }, { name: 'Rashid Khan', role: 'Bowler', form: 9.7 }, { name: 'Mujeeb Ur Rahman', role: 'Bowler', form: 8.9 },
+                    { name: 'Fazalhaq Farooqi', role: 'Bowler', form: 8.7 }, { name: 'Naveen-ul-Haq', role: 'Bowler', form: 8.5 }, { name: 'Fareed Ahmad', role: 'Bowler', form: 8.1 },
+                    { name: 'Ikram Alikhil', role: 'WK-Batsman', form: 7.7 }, { name: 'Najibullah Zadran', role: 'Batsman', form: 8.3 }, { name: 'Qais Ahmad', role: 'Bowler', form: 7.8 }
+                ]}
+            ],
+            venues: [
+                // India
+                { name: 'Wankhede Stadium', city: 'Mumbai', country: 'India', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+                { name: 'Eden Gardens', city: 'Kolkata', country: 'India', avgScore: 165, pitchType: 'Damp / Slow & Low', boundarySize: 'Large' },
+                { name: 'M. Chinnaswamy Stadium', city: 'Bangalore', country: 'India', avgScore: 180, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+                { name: 'Arun Jaitley Stadium', city: 'Delhi', country: 'India', avgScore: 170, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Medium' },
+                { name: 'MA Chidambaram Stadium', city: 'Chennai', country: 'India', avgScore: 160, pitchType: 'Damp / Slow & Low', boundarySize: 'Large' },
+                { name: 'Narendra Modi Stadium', city: 'Ahmedabad', country: 'India', avgScore: 172, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+                { name: 'HPCA Stadium', city: 'Dharamshala', country: 'India', avgScore: 168, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+                { name: 'Rajiv Gandhi Intl. Stadium', city: 'Hyderabad', country: 'India', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+                // Australia
+                { name: 'Melbourne Cricket Ground', city: 'Melbourne', country: 'Australia', avgScore: 170, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+                { name: 'Sydney Cricket Ground', city: 'Sydney', country: 'Australia', avgScore: 168, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Large' },
+                { name: 'Adelaide Oval', city: 'Adelaide', country: 'Australia', avgScore: 172, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+                { name: 'Perth Stadium (Optus Stadium)', city: 'Perth', country: 'Australia', avgScore: 165, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
+                { name: 'The Gabba', city: 'Brisbane', country: 'Australia', avgScore: 170, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+                // England
+                { name: 'Lord\'s', city: 'London', country: 'England', avgScore: 165, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
+                { name: 'Old Trafford', city: 'Manchester', country: 'England', avgScore: 162, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+                { name: 'The Oval', city: 'London', country: 'England', avgScore: 168, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+                { name: 'Edgbaston', city: 'Birmingham', country: 'England', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+                { name: 'Trent Bridge', city: 'Nottingham', country: 'England', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+                // Pakistan/UAE
+                { name: 'Dubai International Stadium', city: 'Dubai', country: 'UAE', avgScore: 158, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+                { name: 'Sharjah Cricket Stadium', city: 'Sharjah', country: 'UAE', avgScore: 155, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Small' },
+                { name: 'Gaddafi Stadium', city: 'Lahore', country: 'Pakistan', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+                { name: 'National Stadium', city: 'Karachi', country: 'Pakistan', avgScore: 172, pitchType: 'Flat / Batting Paradise', boundarySize: 'Large' },
+                // South Africa
+                { name: 'The Wanderers', city: 'Johannesburg', country: 'South Africa', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+                { name: 'Newlands', city: 'Cape Town', country: 'South Africa', avgScore: 168, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+                { name: 'Kingsmead', city: 'Durban', country: 'South Africa', avgScore: 170, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+                { name: 'SuperSport Park', city: 'Centurion', country: 'South Africa', avgScore: 178, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+                // New Zealand
+                { name: 'Eden Park', city: 'Auckland', country: 'New Zealand', avgScore: 178, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+                { name: 'Basin Reserve', city: 'Wellington', country: 'New Zealand', avgScore: 165, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
+                { name: 'Hagley Oval', city: 'Christchurch', country: 'New Zealand', avgScore: 168, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
+                // West Indies
+                { name: 'Kensington Oval', city: 'Barbados', country: 'West Indies', avgScore: 172, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+                { name: 'Queen\'s Park Oval', city: 'Trinidad', country: 'West Indies', avgScore: 168, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Large' },
+                { name: 'Sabina Park', city: 'Jamaica', country: 'West Indies', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+                 // Sri Lanka
+                { name: 'R. Premadasa Stadium', city: 'Colombo', country: 'Sri Lanka', avgScore: 170, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+                { name: 'Pallekele International Stadium', city: 'Pallekele', country: 'Sri Lanka', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+                 // Bangladesh
+                { name: 'Shere Bangla National Stadium', city: 'Dhaka', country: 'Bangladesh', avgScore: 165, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+            ],
+            pitchTypes: [
+                { type: 'Flat / Batting Paradise', impact: 0.05 }, { type: 'Green / Pacer Friendly', impact: -0.05 },
+                { type: 'Dry / Spinner Friendly', impact: -0.04 }, { type: 'Damp / Slow & Low', impact: -0.06 },
+                { type: 'Standard / Balanced', impact: 0 }
+            ],
+            weatherConditions: [
+                { label: 'Clear & Sunny (Day)', icon: '☀️', impact: 0 }, { label: 'Overcast / Cloudy (Day)', icon: '☁️', impact: -0.03 },
+                { label: 'Clear Night (No Dew)', icon: '🌙', impact: 0 }, { label: 'Night Match (Heavy Dew)', icon: '💧', impact: 0.08 },
+                { label: 'Humid Conditions', icon: '🥵', impact: -0.02 }, { label: 'Light Rain / Drizzle', icon: '🌧️', impact: -0.05 }
+            ]
+        };
+
+        let selectedTeams = [], team1Squad = [], team2Squad = [], activeTab = 'score-predictor';
+        const charts = {};
+        const API_URL = 'http://127.0.0.1:5000'; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateTeams();
+            populateVenueDropdown();
+            populatePitchDropdown('sp-pitch');
+            populatePitchDropdown('wp-pitch');
+            populateWeatherDropdown('sp-weather');
+            populateWeatherDropdown('wp-weather');
+            setupEventListeners();
+            checkBackendStatus();
+        });
+        
+        async function checkBackendStatus() {
+  const banner = document.getElementById("status-banner");
+  try {
+    const res = await fetch(`${API_BASE}/api/status`);
+    const data = await res.json();
+    if (data.status === "ok") {
+      banner.textContent = "✅ Connected to backend";
+      banner.style.backgroundColor = "var(--primary-green)";
+      isBackendConnected = true;
+    } else throw new Error();
+  } catch {
+    banner.textContent = "⚠️ Backend not reachable (using local simulation)";
+    banner.style.backgroundColor = "#f59e0b";
+    isBackendConnected = false;
+  }
+}
+setInterval(checkBackendStatus, 8000);
+
+
+        function populateTeams() {
+            const grid = document.getElementById('team-selection-grid');
+            cricketData.teams.forEach(team => {
+                const card = document.createElement('div');
+                card.className = 'team-card p-4 rounded-lg text-center cursor-pointer';
+                card.dataset.teamName = team.name;
+                card.innerHTML = `<i class="ph-check-circle checkmark"></i><span class="text-5xl">${team.flag}</span><h3 class="font-semibold mt-2 text-lg">${team.name}</h3>`;
+                card.addEventListener('click', () => handleTeamSelection(team.name, card));
+                grid.appendChild(card);
+            });
+        }
+        
+        function populateVenueDropdown() { 
+            const select = document.getElementById('sp-venue');
+            select.innerHTML = ''; // Clear existing options first
+            cricketData.venues.forEach(v => select.add(new Option(`${v.name}, ${v.city}`, v.name))); 
+        }
+        function populatePitchDropdown(elementId) {
+            const select = document.getElementById(elementId);
+            select.innerHTML = '';
+            cricketData.pitchTypes.forEach(p => select.add(new Option(p.type, p.type)));
+        }
+        function populateWeatherDropdown(elementId) {
+            const select = document.getElementById(elementId);
+            select.innerHTML = '';
+            cricketData.weatherConditions.forEach(w => select.add(new Option(`${w.icon} ${w.label}`, w.label)));
+        }
+
+        function setupEventListeners() {
+            document.querySelectorAll('.predictor-tab').forEach(tab => tab.addEventListener('click', e => switchTab(e.currentTarget.dataset.tab)));
+            document.getElementById('predict-score-btn').addEventListener('click', getScorePrediction);
+            document.getElementById('calculate-wp-btn').addEventListener('click', getWinProbability);
+            document.getElementById('calculate-rrt-btn').addEventListener('click', plotRunRateTrajectory);
+            document.getElementById('calculate-dls-btn').addEventListener('click', getDlsTarget);
+            
+            ['sp-overs', 'wp-overs', 'rrt-overs'].forEach(id => {
+                document.getElementById(id).addEventListener('input', (e) => validateOversInput(e.target));
+            });
+            
+            document.getElementById('dls-t1-overs').addEventListener('input', e => {
+                validateOversInput(e.target);
+                const t1 = parseFloat(e.target.value) || 20, t2 = document.getElementById('dls-t2-overs');
+                t2.max = t1;
+                if (parseFloat(t2.value) > t1) t2.value = t1;
+            });
+            document.getElementById('dls-t2-overs').addEventListener('input', e => validateOversInput(e.target));
+        }
+
+        function validateOversInput(inputElement) {
+            let value = parseFloat(inputElement.value);
+            if (isNaN(value)) return;
+
+            const overs = Math.floor(value);
+            let balls = Math.round((value - overs) * 10);
+
+            if (balls > 5) {
+                const newOvers = overs + 1;
+                const newBalls = balls - 6;
+                inputElement.value = `${newOvers}.${newBalls}`;
+            }
+        }
+
+        function handleTeamSelection(teamName, card) {
+            const index = selectedTeams.indexOf(teamName);
+            if (index > -1) { selectedTeams.splice(index, 1); card.classList.remove('selected'); }
+            else if (selectedTeams.length < 2) { selectedTeams.push(teamName); card.classList.add('selected'); }
+            
+            document.getElementById('step2').classList.toggle('hidden', selectedTeams.length !== 2);
+            document.getElementById('step3').classList.add('hidden');
+            if (selectedTeams.length === 2) populateSquadSelection();
+        }
+
+        function populateSquadSelection() {
+            team1Squad = []; team2Squad = [];
+            const [team1Data, team2Data] = selectedTeams.map(name => cricketData.teams.find(t => t.name === name));
+            renderSquadUI('team1-squad', team1Data, 1);
+            renderSquadUI('team2-squad', team2Data, 2);
+            updateProceedToStep3Button();
+        }
+
+        function renderSquadUI(containerId, teamData, teamNum) {
+            const container = document.getElementById(containerId);
+            const icons = { 'Batsman': 'ph-baseball-cap', 'Bowler': 'ph-cricket', 'All-Rounder': 'ph-arrows-clockwise', 'WK-Batsman': 'ph-hand-grabbing' };
+            container.innerHTML = `<h3 class="text-xl font-bold mb-2 text-center">${teamData.flag} ${teamData.name}</h3>
+                <p class="text-center mb-3 text-sm text-slate-400">Selected: <span id="team${teamNum}-count">0</span>/11</p>
+                <div class="space-y-1">${teamData.players.map((p, i) => `<div class="player-row flex items-center justify-between p-2.5 rounded-md hover:bg-slate-700/50 transition-colors">
+                    <label for="p${teamNum}-${i}" class="cursor-pointer flex-grow flex items-center gap-3"><i class="${icons[p.role]} text-slate-400"></i><span>${p.name} <span class="text-xs text-slate-500">(${p.form})</span></span></label>
+                    <input type="checkbox" id="p${teamNum}-${i}" class="squad-checkbox" data-team="${teamNum}" data-player-name="${p.name}"></div>`).join('')}</div>`;
+            container.querySelectorAll('.squad-checkbox').forEach(cb => cb.addEventListener('change', e => {
+                handlePlayerSelection(e.target);
+                e.target.closest('.player-row').classList.toggle('bg-blue-900/50', e.target.checked);
+            }));
+        }
+        
+        function handlePlayerSelection(checkbox) {
+            const teamNum = checkbox.dataset.team;
+            const squad = teamNum === '1' ? team1Squad : team2Squad;
+            if (checkbox.checked) { if (squad.length < 11) squad.push(checkbox.dataset.playerName); else checkbox.checked = false; }
+            else { const index = squad.indexOf(checkbox.dataset.playerName); if (index > -1) squad.splice(index, 1); }
+            document.getElementById(`team${teamNum}-count`).textContent = squad.length;
+            updateProceedToStep3Button();
+        }
+
+        function updateProceedToStep3Button() {
+            const allSelected = team1Squad.length === 11 && team2Squad.length === 11;
+            document.getElementById('step3').classList.toggle('hidden', !allSelected);
+            if(allSelected) switchTab('score-predictor', true);
+        }
+
+        function switchTab(tabId, force) {
+            if (activeTab === tabId && !force) return;
+            activeTab = tabId;
+            document.querySelectorAll('.predictor-tab').forEach(tab => tab.classList.toggle('tab-active', tab.dataset.tab === tabId));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.style.display = 'none');
+            document.getElementById(tabId).style.display = 'block';
+            if (tabId === 'form-comparison') updateFormComparisonChart();
+        }
+        
+        const DLS_RESOURCES = [{"20":100,"15":85.1,"10":62.7,"5":33.5,"1":8.4},{"20":93.9,"15":79.8,"10":59.5,"5":32.4,"1":8.2},{"20":86.5,"15":73.1,"10":55.1,"5":30.7,"1":7.9},{"20":77.5,"15":65.1,"10":49.5,"5":28.3,"1":7.5},{"20":66.9,"15":56.1,"10":42.9,"5":25.1,"1":6.9},{"20":55.4,"15":46.4,"10":35.7,"5":21.4,"1":6.2},{"20":43.4,"15":36.5,"10":28.5,"5":17.5,"1":5.3},{"20":31.6,"15":26.8,"10":21.4,"5":13.6,"1":4.2},{"20":20.7,"15":17.8,"10":14.6,"5":9.6,"1":3.1},{"20":11.5,"15":10,"10":8.4,"5":5.8,"1":2}];
+        function getResourcePercentage(overs, wickets) {
+            if (wickets >= 10 || overs <= 0) return 0;
+            const table = DLS_RESOURCES[wickets]; const keys = Object.keys(table).map(Number).sort((a,b)=>a-b);
+            if (table[overs]) return table[overs]; if (overs >= keys[keys.length-1]) return table[keys[keys.length-1]]; if (overs <= keys[0]) return table[keys[0]];
+            const l = Math.max(...keys.filter(k => k <= overs)), u = Math.min(...keys.filter(k => k >= overs));
+            return table[l] + (table[u] - table[l]) * (overs - l) / (u - l);
+        }
+
+        function animateCount(element, finalValue, { isPercentage = false, isFloat = false } = {}) {
+            let start = 0, current = 0;
+            const duration = 1000;
+            const step = (timestamp) => {
+                if (!start) start = timestamp;
+                const progress = Math.min((timestamp - start) / duration, 1);
+                current = progress * finalValue;
+                element.textContent = isFloat ? current.toFixed(2) : (isPercentage ? `${Math.floor(current)}%` : Math.floor(current));
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+async function apiCall(endpoint, payload) {
+  const logic = {
+    predict_score: p => {
+      if (p.overs <= 0 || p.wickets >= 10)
+        return { low: p.score, avg: p.score, high: p.score };
+      const current_rate = p.score / p.overs;
+      const remaining_overs = 20 - p.overs;
+      const wickets_in_hand = 10 - p.wickets;
+      // Project remaining overs at a rate that accelerates based on wickets in hand
+      const projected_death_rate = current_rate * (1 + (wickets_in_hand * 0.05));
+      const remaining_runs = remaining_overs * projected_death_rate;
+      let avg = Math.ceil(p.score + remaining_runs);
+      const venueData = cricketData.venues.find(v => v.name === p.venue);
+      if (venueData) {
+        avg = (avg * 0.7) + (venueData.avgScore * 0.3); // Anchor to venue average
+      }
+      return {
+        low: Math.ceil(avg * 0.9),
+        avg: Math.ceil(avg),
+        high: Math.ceil(avg * 1.1)
+      };
+    },
+
+    win_probability: p => {
+      const b = Math.floor(p.overs) * 6 + (p.overs * 10 % 10);
+      const crr = p.overs > 0 ? p.score / p.overs : 0;
+      if (p.score >= p.target)
+        return { win_prob: 100, rrr: 0, runs_needed: 0, balls_left: 120 - b, crr };
+      if (p.wickets >= 10 || b >= 120)
+        return { win_prob: 0, rrr: Infinity, runs_needed: p.target - p.score, balls_left: 0, crr };
+      const r = p.target - p.score;
+      const bl = 120 - b;
+      const rrr = bl > 0 ? (r / bl) * 6 : 999;
+      let prob = 50 - (rrr - crr) * 10 + (10 - p.wickets) * 5;
+      const pitchImpact = cricketData.pitchTypes.find(pt => pt.type === p.pitch)?.impact || 0;
+      const weatherImpact = cricketData.weatherConditions.find(wc => wc.label === p.weather)?.impact || 0;
+      prob = prob * (1 + pitchImpact + weatherImpact);
+      return {
+        win_prob: Math.round(Math.min(99, Math.max(1, prob))),
+        rrr,
+        runs_needed: r,
+        balls_left: bl,
+        crr
+      };
+    },
+
+    dls_calculate: p => ({
+      target: Math.floor(
+        p.team1_score *
+          (getResourcePercentage(p.team2_overs, p.team2_wickets_lost) /
+            getResourcePercentage(p.team1_overs, 0))
+      ) + 1
+    })
+  };
+
+  // If backend not connected, use local simulation logic
+  if (!isBackendConnected)
+    return new Promise(res => setTimeout(() => res(logic[endpoint](payload)), 500));
+
+  try {
+    const response = await fetch(`${API_BASE}/api/${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) throw new Error("Network error");
+    return await response.json();
+  } catch (error) {
+    // fallback to local simulation if backend call fails
+    updateBackendStatus("failed");
+    return new Promise(res => setTimeout(() => res(logic[endpoint](payload)), 500));
+  }
+}
+
+
+        async function getScorePrediction() {
+            const scoreInput = document.getElementById('sp-score').value;
+            const wicketsInput = document.getElementById('sp-wickets').value;
+            const oversInput = document.getElementById('sp-overs').value;
+            const venueInput = document.getElementById('sp-venue').value;
+
+            const score = parseInt(scoreInput);
+            const wickets = parseInt(wicketsInput);
+            const overs = parseFloat(oversInput);
+            const venueName = venueInput;
+
+            // Improved Validation
+            if (isNaN(score) || score < 0 ||
+                isNaN(wickets) || wickets < 0 || wickets > 10 ||
+                isNaN(overs) || overs < 0 || overs > 20 ||
+                !venueName) { // Check if venueName is empty or null
+                console.error("Invalid input for score prediction:", { scoreInput, wicketsInput, oversInput, venueInput });
+                // Optionally show an error to the user via UI instead of console
+                return; 
+            }
+            
+            const payload = { score, wickets, overs, venue: venueName }; 
+
+            const venue = cricketData.venues.find(v => v.name === venueName);
+            if (!venue) {
+                console.error("Selected venue not found in data:", venueName);
+                return; // Stop if venue data is missing
+            }
+            document.getElementById('sp-venue-avg').textContent = venue.avgScore;
+            document.getElementById('sp-boundary').textContent = venue.boundarySize;
+            document.getElementById('sp-weather-impact').textContent = `${(cricketData.weatherConditions.find(w=>w.label===document.getElementById('sp-weather').value).impact + 1) *100}%`;
+            if (selectedTeams.length > 0) document.getElementById('sp-team-form').textContent = `${getTeamForm(team1Squad, cricketData.teams.find(t=>t.name===selectedTeams[0])).overall.toFixed(1)}/10`;
+            
+            document.getElementById('score-prediction-output').classList.remove('hidden'); // Show the output section
+            
+            const result = await apiCall('predict_score', payload);
+            if (result) {
+                animateCount(document.getElementById('sp-low'), result.low);
+                animateCount(document.getElementById('sp-avg'), result.avg);
+                animateCount(document.getElementById('sp-high'), result.high);
+            }
+        }
+        
+        async function getWinProbability() {
+             const payload = {
+                target: parseInt(document.getElementById('wp-target').value), score: parseInt(document.getElementById('wp-score').value), 
+                wickets: parseInt(document.getElementById('wp-wickets').value), overs: parseFloat(document.getElementById('wp-overs').value),
+                pitch: document.getElementById('wp-pitch').value, weather: document.getElementById('wp-weather').value
+            };
+
+            const numericPayload = { target: payload.target, score: payload.score, wickets: payload.wickets, overs: payload.overs };
+            if (Object.values(numericPayload).some(v => isNaN(v))) {
+                console.error("Invalid numeric input for win probability");
+                return;
+            }
+            if (!payload.pitch || !payload.weather) {
+                console.error("Pitch or weather not selected");
+                return;
+            }
+
+            document.getElementById('win-probability-output').classList.remove('hidden');
+            const result = await apiCall('win_probability', payload);
+            if (result) {
+                animateCount(document.getElementById('wp-runs-needed'), result.runs_needed);
+                animateCount(document.getElementById('wp-balls-left'), result.balls_left);
+                animateCount(document.getElementById('wp-crr'), result.crr, {isFloat: true});
+                if(isFinite(result.rrr)) animateCount(document.getElementById('wp-rrr'), result.rrr, {isFloat: true}); else document.getElementById('wp-rrr').textContent = "N/A";
+                animateCount(document.getElementById('wp-percentage'), result.win_prob, {isPercentage: true});
+                updateWinProbabilityChart(result.win_prob);
+            }
+        }
+        
+        function updateWinProbabilityChart(winProb) {
+            if (charts.wp) charts.wp.destroy();
+            const ctx = document.getElementById('win-probability-chart').getContext('2d');
+            charts.wp = new Chart(ctx, {
+                type: 'doughnut', data: { datasets: [{ data: [winProb, 100 - winProb], backgroundColor: ['var(--primary-green)', 'rgba(239, 68, 68, 0.5)'], borderColor: 'var(--card-color)', borderWidth: 4, cutout: '80%' }] },
+                options: { responsive: true, plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { animateRotate: true, animateScale: true } }
+            });
+        }
+
+        async function getDlsTarget() {
+            const payload = { team1_score: parseInt(document.getElementById('dls-t1-score').value), team1_overs: parseFloat(document.getElementById('dls-t1-overs').value) || 20, team2_overs: parseFloat(document.getElementById('dls-t2-overs').value), team2_wickets_lost: parseInt(document.getElementById('dls-t2-wickets').value) };
+            if (isNaN(payload.team1_score) || isNaN(payload.team2_overs) || isNaN(payload.team2_wickets_lost)) return;
+            if(payload.team2_overs > payload.team1_overs) return;
+            document.getElementById('dls-output').classList.remove('hidden');
+            const result = await apiCall('dls_calculate', payload);
+            if (result) {
+                animateCount(document.getElementById('dls-target'), result.target);
+                document.getElementById('dls-revised-overs').textContent = payload.team2_overs;
+            }
+        }
+
+        function plotRunRateTrajectory() {
+            const score = parseInt(document.getElementById('rrt-score').value), oversDone = parseFloat(document.getElementById('rrt-overs').value);
+            if(isNaN(score) || isNaN(oversDone) || oversDone >= 20 || oversDone <= 0) return;
+            document.getElementById('run-rate-output').classList.remove('hidden');
+            const crr = score / oversDone;
+            const labels = Array.from({length: 20 - Math.floor(oversDone)}, (_, i) => Math.ceil(oversDone) + i);
+            const projected = labels.map(o => Math.round(score + (o - oversDone) * crr));
+            if (charts.rrt) charts.rrt.destroy();
+            const ctx = document.getElementById('run-rate-chart').getContext('2d');
+            charts.rrt = new Chart(ctx, {
+                type: 'line', data: { labels, datasets: [{ label: 'Projected Score', data: projected, borderColor: 'var(--primary-blue)', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] },
+                options: { responsive: true, plugins: { legend: { labels: { color: '#e2e8f0' } } }, scales: { y: { ticks:{color:'#94a3b8'}, grid:{color:'var(--border-color)'}, title:{display:true,text:'Projected Score',color:'#e2e8f0'}}, x: { ticks:{color:'#94a3b8'}, grid:{color:'var(--border-color)'}, title:{display:true,text:'Overs',color:'#e2e8f0'}}}}
+            });
+        }
+        
+        function getTeamForm(squad, teamData) {
+            const r = { b:0, bo:0, ar:0, wk:0, bc:0, boc:0, arc:0, wkc:0 };
+            squad.forEach(name => { const p = teamData.players.find(pl => pl.name === name); if(p) switch(p.role){ case 'Batsman':r.b+=p.form;r.bc++;break; case 'Bowler':r.bo+=p.form;r.boc++;break; case 'All-Rounder':r.ar+=p.form;r.arc++;break; case 'WK-Batsman':r.wk+=p.form;r.wkc++;break; } });
+            return {
+                batting: (r.bc+r.wkc)>0?(r.b+r.wk)/(r.bc+r.wkc):0, bowling: r.boc>0?r.bo/r.boc:0, allRounders: r.arc>0?r.ar/r.arc:0, wicketKeeping: r.wkc>0?r.wk/r.arc:0,
+                overall: squad.length>0?(r.b+r.bo+r.ar+r.wk)/squad.length:0
+            };
+        }
+
+        function updateFormComparisonChart() {
+            if(selectedTeams.length < 2 || team1Squad.length < 11 || team2Squad.length < 11) return;
+            const [t1d, t2d] = selectedTeams.map(name => cricketData.teams.find(t => t.name === name));
+            const f1 = getTeamForm(team1Squad, t1d), f2 = getTeamForm(team2Squad, t2d);
+            document.getElementById('form-team1-card').innerHTML = `<p class="text-sm text-slate-400">${t1d.name}</p><p class="text-4xl font-bold text-green-400">${f1.overall.toFixed(1)}</p><p class="text-xs text-slate-500">Overall Form</p>`;
+            document.getElementById('form-team2-card').innerHTML = `<p class="text-sm text-slate-400">${t2d.name}</p><p class="text-4xl font-bold text-blue-400">${f2.overall.toFixed(1)}</p><p class="text-xs text-slate-500">Overall Form</p>`;
+            document.getElementById('form-details-comparison').innerHTML = ['batting','bowling','allRounders','wicketKeeping'].map(k => `<div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg"><span class="font-bold text-lg text-green-400">${f1[k].toFixed(1)}</span> <span class="text-sm text-slate-400">${k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</span> <span class="font-bold text-lg text-blue-400">${f2[k].toFixed(1)}</span></div>`).join('');
+            if (charts.form) charts.form.destroy();
+            const ctx = document.getElementById('form-comparison-chart').getContext('2d');
+            charts.form = new Chart(ctx, {
+                type: 'radar', data: { labels: ['Batting', 'Bowling', 'All-Round', 'Wicket-Keeping'], datasets: [
+                    { label: t1d.name, data: [f1.batting, f1.bowling, f1.allRounders, f1.wicketKeeping], fill: true, backgroundColor: 'rgba(34, 197, 94, 0.3)', borderColor: 'var(--primary-green)', pointBackgroundColor: 'var(--primary-green)' },
+                    { label: t2d.name, data: [f2.batting, f2.bowling, f2.allRounders, f2.wicketKeeping], fill: true, backgroundColor: 'rgba(59, 130, 246, 0.3)', borderColor: 'var(--primary-blue)', pointBackgroundColor: 'var(--primary-blue)' }
+                ]},
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#e2e8f0' } } }, scales: { r: { suggestedMin: 6, suggestedMax: 10, pointLabels: { color: '#e2e8f0', font: { size: 14 } }, grid: { color: 'var(--border-color)' }, angleLines: { color: 'var(--border-color)' }, ticks: { display: false } } } }
+            });
+        }
+    </script>
+</body>
+</html>
+
+
