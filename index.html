@@ -276,132 +276,244 @@
         // Data Store
         
         const API_BASE =
-  window.location.hostname === "localhost" || window.location.hostname === ""
-    ? "http://127.0.0.1:5000"
-    : window.location.origin;
+  window.location.hostname === "localhost" || window.location.hostname === "" || window.location.protocol === "file:"
+    ? "http://127.0.0.1:5000" // Use localhost for local development including file://
+    : ""; // Use relative paths for deployment (like Vercel)
 
 
 let isBackendConnected = false;
 
-        const cricketData = {
-            teams: [
-                { name: "India", flag: "🇮🇳", players: [
-                    { name: 'Rohit Sharma', role: 'Batsman', form: 9.2 }, { name: 'Virat Kohli', role: 'Batsman', form: 9.5 }, { name: 'Shubman Gill', role: 'Batsman', form: 8.8 },
-                    { name: 'Suryakumar Yadav', role: 'Batsman', form: 9.0 }, { name: 'Rishabh Pant', role: 'WK-Batsman', form: 8.5 }, { name: 'Hardik Pandya', role: 'All-Rounder', form: 8.7 },
-                    { name: 'Ravindra Jadeja', role: 'All-Rounder', form: 8.3 }, { name: 'Axar Patel', role: 'All-Rounder', form: 7.5 }, { name: 'Jasprit Bumrah', role: 'Bowler', form: 9.8 },
-                    { name: 'Mohammed Shami', role: 'Bowler', form: 9.1 }, { name: 'Kuldeep Yadav', role: 'Bowler', form: 8.4 }, { name: 'Yuzvendra Chahal', role: 'Bowler', form: 8.0 },
-                    { name: 'KL Rahul', role: 'Batsman', form: 7.8 }, { name: 'Ishan Kishan', role: 'WK-Batsman', form: 7.2 }, { name: 'Arshdeep Singh', role: 'Bowler', form: 7.6 }
-                ]},
-                { name: "Australia", flag: "🇦🇺", players: [
-                    { name: 'David Warner', role: 'Batsman', form: 8.9 }, { name: 'Steve Smith', role: 'Batsman', form: 9.3 }, { name: 'Mitchell Marsh', role: 'All-Rounder', form: 8.6 },
-                    { name: 'Glenn Maxwell', role: 'All-Rounder', form: 8.8 }, { name: 'Marcus Stoinis', role: 'All-Rounder', form: 7.9 }, { name: 'Josh Inglis', role: 'WK-Batsman', form: 8.2 },
-                    { name: 'Matthew Wade', role: 'WK-Batsman', form: 7.5 }, { name: 'Pat Cummins', role: 'Bowler', form: 9.4 }, { name: 'Mitchell Starc', role: 'Bowler', form: 9.2 },
-                    { name: 'Josh Hazlewood', role: 'Bowler', form: 9.0 }, { name: 'Adam Zampa', role: 'Bowler', form: 8.7 }, { name: 'Nathan Ellis', role: 'Bowler', form: 8.1 },
-                    { name: 'Travis Head', role: 'Batsman', form: 8.5 }, { name: 'Tim David', role: 'Batsman', form: 7.8 }, { name: 'Ashton Agar', role: 'All-Rounder', form: 7.3 }
-                ]},
-                { name: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", players: [
-                    { name: 'Jos Buttler', role: 'WK-Batsman', form: 9.1 }, { name: 'Jason Roy', role: 'Batsman', form: 8.4 }, { name: 'Dawid Malan', role: 'Batsman', form: 8.7 },
-                    { name: 'Ben Stokes', role: 'All-Rounder', form: 9.0 }, { name: 'Moeen Ali', role: 'All-Rounder', form: 8.3 }, { name: 'Liam Livingstone', role: 'All-Rounder', form: 8.5 },
-                    { name: 'Sam Curran', role: 'All-Rounder', form: 8.1 }, { name: 'Jofra Archer', role: 'Bowler', form: 9.3 }, { name: 'Mark Wood', role: 'Bowler', form: 8.9 },
-                    { name: 'Adil Rashid', role: 'Bowler', form: 8.8 }, { name: 'Chris Woakes', role: 'Bowler', form: 8.6 }, { name: 'Reece Topley', role: 'Bowler', form: 8.2 },
-                    { name: 'Phil Salt', role: 'Batsman', form: 7.9 }, { name: 'Jonny Bairstow', role: 'WK-Batsman', form: 7.7 }, { name: 'Tom Curran', role: 'Bowler', form: 7.4 }
-                ]},
-                { name: "Pakistan", flag: "🇵🇰", players: [
-                    { name: 'Babar Azam', role: 'Batsman', form: 9.6 }, { name: 'Mohammad Rizwan', role: 'WK-Batsman', form: 9.2 }, { name: 'Fakhar Zaman', role: 'Batsman', form: 8.5 },
-                    { name: 'Iftikhar Ahmed', role: 'All-Rounder', form: 8.0 }, { name: 'Shadab Khan', role: 'All-Rounder', form: 8.4 }, { name: 'Mohammad Nawaz', role: 'All-Rounder', form: 7.8 },
-                    { name: 'Shaheen Afridi', role: 'Bowler', form: 9.5 }, { name: 'Haris Rauf', role: 'Bowler', form: 9.0 }, { name: 'Naseem Shah', role: 'Bowler', form: 8.7 },
-                    { name: 'Mohammad Wasim', role: 'Bowler', form: 8.2 }, { name: 'Usama Mir', role: 'Bowler', form: 7.9 }, { name: 'Mohammad Hafeez', role: 'All-Rounder', form: 8.3 },
-                    { name: 'Sarfaraz Ahmed', role: 'WK-Batsman', form: 7.6 }, { name: 'Asif Ali', role: 'Batsman', form: 7.4 }, { name: 'Faheem Ashraf', role: 'All-Rounder', form: 7.2 }
-                ]},
-                { name: "South Africa", flag: "🇿🇦", players: [
-                    { name: 'Quinton de Kock', role: 'WK-Batsman', form: 9.0 }, { name: 'Temba Bavuma', role: 'Batsman', form: 8.3 }, { name: 'Aiden Markram', role: 'Batsman', form: 8.7 },
-                    { name: 'Rassie van der Dussen', role: 'Batsman', form: 8.5 }, { name: 'David Miller', role: 'Batsman', form: 8.9 }, { name: 'Heinrich Klaasen', role: 'WK-Batsman', form: 8.6 },
-                    { name: 'Wayne Parnell', role: 'All-Rounder', form: 8.1 }, { name: 'Keshav Maharaj', role: 'Bowler', form: 8.4 }, { name: 'Kagiso Rabada', role: 'Bowler', form: 9.4 },
-                    { name: 'Anrich Nortje', role: 'Bowler', form: 9.1 }, { name: 'Lungi Ngidi', role: 'Bowler', form: 8.8 }, { name: 'Tabraiz Shamsi', role: 'Bowler', form: 8.5 },
-                    { name: 'Reeza Hendricks', role: 'Batsman', form: 7.8 }, { name: 'Dwaine Pretorius', role: 'All-Rounder', form: 7.6 }, { name: 'Marco Jansen', role: 'All-Rounder', form: 7.9 }
-                ]},
-                { name: "New Zealand", flag: "🇳🇿", players: [
-                    { name: 'Kane Williamson', role: 'Batsman', form: 9.4 }, { name: 'Devon Conway', role: 'WK-Batsman', form: 8.8 }, { name: 'Finn Allen', role: 'Batsman', form: 8.2 },
-                    { name: 'Glenn Phillips', role: 'All-Rounder', form: 8.6 }, { name: 'Daryl Mitchell', role: 'All-Rounder', form: 8.5 }, { name: 'James Neesham', role: 'All-Rounder', form: 8.0 },
-                    { name: 'Mitchell Santner', role: 'All-Rounder', form: 7.9 }, { name: 'Trent Boult', role: 'Bowler', form: 9.3 }, { name: 'Tim Southee', role: 'Bowler', form: 9.0 },
-                    { name: 'Lockie Ferguson', role: 'Bowler', form: 8.9 }, { name: 'Ish Sodhi', role: 'Bowler', form: 8.4 }, { name: 'Adam Milne', role: 'Bowler', form: 8.1 },
-                    { name: 'Tom Latham', role: 'WK-Batsman', form: 8.3 }, { name: 'Mark Chapman', role: 'Batsman', form: 7.7 }, { name: 'Michael Bracewell', role: 'All-Rounder', form: 7.5 }
-                ]},
-                { name: "West Indies", flag: "🇧🇧", players: [
-                    { name: 'Nicholas Pooran', role: 'WK-Batsman', form: 8.9 }, { name: 'Brandon King', role: 'Batsman', form: 8.3 }, { name: 'Kyle Mayers', role: 'All-Rounder', form: 8.6 },
-                    { name: 'Rovman Powell', role: 'All-Rounder', form: 8.4 }, { name: 'Andre Russell', role: 'All-Rounder', form: 9.0 }, { name: 'Jason Holder', role: 'All-Rounder', form: 8.7 },
-                    { name: 'Romario Shepherd', role: 'All-Rounder', form: 7.8 }, { name: 'Alzarri Joseph', role: 'Bowler', form: 8.8 }, { name: 'Akeal Hosein', role: 'Bowler', form: 8.5 },
-                    { name: 'Obed McCoy', role: 'Bowler', form: 8.2 }, { name: 'Sheldon Cottrell', role: 'Bowler', form: 8.0 }, { name: 'Hayden Walsh Jr', role: 'Bowler', form: 7.9 },
-                    { name: 'Shai Hope', role: 'WK-Batsman', form: 8.1 }, { name: 'Shimron Hetmyer', role: 'Batsman', form: 7.9 }, { name: 'Odean Smith', role: 'All-Rounder', form: 7.4 }
-                ]},
-                { name: "Sri Lanka", flag: "🇱🇰", players: [
-                    { name: 'Pathum Nissanka', role: 'Batsman', form: 8.4 }, { name: 'Kusal Mendis', role: 'WK-Batsman', form: 8.7 }, { name: 'Charith Asalanka', role: 'All-Rounder', form: 8.3 },
-                    { name: 'Wanindu Hasaranga', role: 'All-Rounder', form: 9.2 }, { name: 'Dasun Shanaka', role: 'All-Rounder', form: 8.1 }, { name: 'Dhananjaya de Silva', role: 'All-Rounder', form: 8.0 },
-                    { name: 'Maheesh Theekshana', role: 'Bowler', form: 8.9 }, { name: 'Matheesha Pathirana', role: 'Bowler', form: 8.6 }, { name: 'Dilshan Madushanka', role: 'Bowler', form: 8.5 },
-                    { name: 'Dushmantha Chameera', role: 'Bowler', form: 8.8 }, { name: 'Kasun Rajitha', role: 'Bowler', form: 8.2 }, { name: 'Chamika Karunaratne', role: 'All-Rounder', form: 7.8 },
-                    { name: 'Dinesh Chandimal', role: 'WK-Batsman', form: 8.0 }, { name: 'Bhanuka Rajapaksa', role: 'Batsman', form: 7.6 }, { name: 'Lahiru Kumara', role: 'Bowler', form: 8.1 }
-                ]},
-                { name: "Bangladesh", flag: "🇧🇩", players: [
-                    { name: 'Litton Das', role: 'WK-Batsman', form: 8.5 }, { name: 'Najmul Hossain Shanto', role: 'Batsman', form: 8.3 }, { name: 'Towhid Hridoy', role: 'Batsman', form: 8.0 },
-                    { name: 'Shakib Al Hasan', role: 'All-Rounder', form: 9.1 }, { name: 'Mahmudullah', role: 'All-Rounder', form: 8.2 }, { name: 'Mehidy Hasan Miraz', role: 'All-Rounder', form: 8.4 },
-                    { name: 'Afif Hossain', role: 'All-Rounder', form: 7.7 }, { name: 'Mustafizur Rahman', role: 'Bowler', form: 9.0 }, { name: 'Taskin Ahmed', role: 'Bowler', form: 8.7 },
-                    { name: 'Shoriful Islam', role: 'Bowler', form: 8.3 }, { name: 'Nasum Ahmed', role: 'Bowler', form: 8.1 }, { name: 'Hasan Mahmud', role: 'Bowler', form: 7.9 },
-                    { name: 'Mushfiqur Rahim', role: 'WK-Batsman', form: 8.6 }, { name: 'Soumya Sarkar', role: 'All-Rounder', form: 7.5 }, { name: 'Tanzim Hasan Sakib', role: 'Bowler', form: 7.6 }
-                ]},
-                { name: "Afghanistan", flag: "🇦🇫", players: [
-                    { name: 'Rahmanullah Gurbaz', role: 'WK-Batsman', form: 8.6 }, { name: 'Ibrahim Zadran', role: 'Batsman', form: 8.4 }, { name: 'Hazratullah Zazai', role: 'Batsman', form: 7.9 },
-                    { name: 'Mohammad Nabi', role: 'All-Rounder', form: 8.8 }, { name: 'Gulbadin Naib', role: 'All-Rounder', form: 8.0 }, { name: 'Azmatullah Omarzai', role: 'All-Rounder', form: 8.2 },
-                    { name: 'Karim Janat', role: 'All-Rounder', form: 7.6 }, { name: 'Rashid Khan', role: 'Bowler', form: 9.7 }, { name: 'Mujeeb Ur Rahman', role: 'Bowler', form: 8.9 },
-                    { name: 'Fazalhaq Farooqi', role: 'Bowler', form: 8.7 }, { name: 'Naveen-ul-Haq', role: 'Bowler', form: 8.5 }, { name: 'Fareed Ahmad', role: 'Bowler', form: 8.1 },
-                    { name: 'Ikram Alikhil', role: 'WK-Batsman', form: 7.7 }, { name: 'Najibullah Zadran', role: 'Batsman', form: 8.3 }, { name: 'Qais Ahmad', role: 'Bowler', form: 7.8 }
-                ]}
-            ],
-            venues: [
-                // India
-                { name: 'Wankhede Stadium', city: 'Mumbai', country: 'India', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
-                { name: 'Eden Gardens', city: 'Kolkata', country: 'India', avgScore: 165, pitchType: 'Damp / Slow & Low', boundarySize: 'Large' },
-                { name: 'M. Chinnaswamy Stadium', city: 'Bangalore', country: 'India', avgScore: 180, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
-                { name: 'Arun Jaitley Stadium', city: 'Delhi', country: 'India', avgScore: 170, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Medium' },
-                { name: 'MA Chidambaram Stadium', city: 'Chennai', country: 'India', avgScore: 160, pitchType: 'Damp / Slow & Low', boundarySize: 'Large' },
-                { name: 'Narendra Modi Stadium', city: 'Ahmedabad', country: 'India', avgScore: 172, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
-                { name: 'HPCA Stadium', city: 'Dharamshala', country: 'India', avgScore: 168, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
-                { name: 'Rajiv Gandhi Intl. Stadium', city: 'Hyderabad', country: 'India', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
-                // Australia
-                { name: 'Melbourne Cricket Ground', city: 'Melbourne', country: 'Australia', avgScore: 170, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
-                { name: 'Sydney Cricket Ground', city: 'Sydney', country: 'Australia', avgScore: 168, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Large' },
-                { name: 'Adelaide Oval', city: 'Adelaide', country: 'Australia', avgScore: 172, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
-                { name: 'Perth Stadium (Optus Stadium)', city: 'Perth', country: 'Australia', avgScore: 165, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
-                { name: 'The Gabba', city: 'Brisbane', country: 'Australia', avgScore: 170, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
-                // England
-                { name: 'Lord\'s', city: 'London', country: 'England', avgScore: 165, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
-                { name: 'Old Trafford', city: 'Manchester', country: 'England', avgScore: 162, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
-                { name: 'The Oval', city: 'London', country: 'England', avgScore: 168, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
-                { name: 'Edgbaston', city: 'Birmingham', country: 'England', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
-                { name: 'Trent Bridge', city: 'Nottingham', country: 'England', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
-                // Pakistan/UAE
-                { name: 'Dubai International Stadium', city: 'Dubai', country: 'UAE', avgScore: 158, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
-                { name: 'Sharjah Cricket Stadium', city: 'Sharjah', country: 'UAE', avgScore: 155, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Small' },
-                { name: 'Gaddafi Stadium', city: 'Lahore', country: 'Pakistan', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
-                { name: 'National Stadium', city: 'Karachi', country: 'Pakistan', avgScore: 172, pitchType: 'Flat / Batting Paradise', boundarySize: 'Large' },
-                // South Africa
-                { name: 'The Wanderers', city: 'Johannesburg', country: 'South Africa', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
-                { name: 'Newlands', city: 'Cape Town', country: 'South Africa', avgScore: 168, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
-                { name: 'Kingsmead', city: 'Durban', country: 'South Africa', avgScore: 170, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
-                { name: 'SuperSport Park', city: 'Centurion', country: 'South Africa', avgScore: 178, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
-                // New Zealand
-                { name: 'Eden Park', city: 'Auckland', country: 'New Zealand', avgScore: 178, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
-                { name: 'Basin Reserve', city: 'Wellington', country: 'New Zealand', avgScore: 165, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
-                { name: 'Hagley Oval', city: 'Christchurch', country: 'New Zealand', avgScore: 168, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
-                // West Indies
-                { name: 'Kensington Oval', city: 'Barbados', country: 'West Indies', avgScore: 172, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
-                { name: 'Queen\'s Park Oval', city: 'Trinidad', country: 'West Indies', avgScore: 168, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Large' },
-                { name: 'Sabina Park', city: 'Jamaica', country: 'West Indies', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
-                 // Sri Lanka
-                { name: 'R. Premadasa Stadium', city: 'Colombo', country: 'Sri Lanka', avgScore: 170, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
-                { name: 'Pallekele International Stadium', city: 'Pallekele', country: 'Sri Lanka', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
-                 // Bangladesh
-                { name: 'Shere Bangla National Stadium', city: 'Dhaka', country: 'Bangladesh', avgScore: 165, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
-            ],
+     
+    const cricketData = {
+         teams: [
+            {
+            name: "India", flag: "🇮🇳", players: [
+                { name: "Suryakumar Yadav", role: "Batsman", form: 9.3 }, { name: "Abhishek Sharma", role: "Batsman", form: 8.6 },
+                { name: "Shubman Gill", role: "Batsman", form: 9.0 }, { name: "Tilak Varma", role: "Batsman", form: 8.8 },
+                { name: "Rinku Singh", role: "Batsman", form: 8.9 }, { name: "Nitish Kumar Reddy", role: "All-Rounder", form: 8.3 },
+                { name: "Shivam Dube", role: "All-Rounder", form: 8.6 }, { name: "Axar Patel", role: "All-Rounder", form: 8.4 },
+                { name: "Jitesh Sharma", role: "WK-Batsman", form: 8.1 }, { name: "Sanju Samson", role: "WK-Batsman", form: 8.2 },
+                { name: "Washington Sundar", role: "All-Rounder", form: 8.0 }, { name: "Kuldeep Yadav", role: "Bowler", form: 8.4 },
+                { name: "Jasprit Bumrah", role: "Bowler", form: 9.4 }, { name: "Arshdeep Singh", role: "Bowler", form: 8.4 },
+                { name: "Varun Chakaravarthy", role: "Bowler", form: 8.1 }
+            ]
+            },
+            {
+            name: "Australia", flag: "🇦🇺", players: [
+                { name: "Mitchell Marsh", role: "All-Rounder", form: 9.1 }, { name: "Travis Head", role: "Batsman", form: 8.8 },
+                { name: "Josh Inglis", role: "WK-Batsman", form: 8.5 }, { name: "Tim David", role: "Batsman", form: 8.6 },
+                { name: "Marcus Stoinis", role: "All-Rounder", form: 8.5 }, { name: "Glenn Maxwell", role: "All-Rounder", form: 9.4 },
+                { name: "Sean Abbott", role: "Bowler", form: 8.3 }, { name: "Josh Hazlewood", role: "Bowler", form: 9.1 },
+                { name: "Nathan Ellis", role: "Bowler", form: 8.2 }, { name: "Adam Zampa", role: "Bowler", form: 8.7 },
+                { name: "Matthew Short", role: "Batsman", form: 8.2 }, { name: "Xavier Bartlett", role: "Bowler", form: 7.9 },
+                { name: "Ben Dwarshuis", role: "Bowler", form: 8.0 }, { name: "Matthew Kuhnemann", role: "Bowler", form: 7.8 },
+                { name: "Mitchell Owen", role: "All-Rounder", form: 8.0 }
+            ]
+            },
+            {
+            name: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", players: [ // Corrected England Flag
+                { name: "Harry Brook", role: "Batsman", form: 8.7 }, { name: "Rehan Ahmed", role: "All-Rounder", form: 8.2 },
+                { name: "Sonny Baker", role: "Bowler", form: 8.0 }, { name: "Tom Banton", role: "Batsman", form: 7.9 },
+                { name: "Jacob Bethell", role: "All-Rounder", form: 8.1 }, { name: "Jos Buttler", role: "WK-Batsman", form: 9.3 },
+                { name: "Brydon Carse", role: "Bowler", form: 8.3 }, { name: "Jordan Cox", role: "WK-Batsman", form: 8.1 },
+                { name: "Zak Crawley", role: "Batsman", form: 8.2 }, { name: "Sam Curran", role: "All-Rounder", form: 8.8 },
+                { name: "Liam Dawson", role: "All-Rounder", form: 8.2 }, { name: "Jamie Overton", role: "Bowler", form: 8.3 },
+                { name: "Adil Rashid", role: "Bowler", form: 8.7 }, { name: "Phil Salt", role: "WK-Batsman", form: 8.3 },
+                { name: "Luke Wood", role: "Bowler", form: 8.0 }
+            ]
+            },
+            {
+            name: "Pakistan", flag: "🇵🇰", players: [
+                { name: "Salman Ali Agha", role: "All-Rounder", form: 8.1 }, { name: "Fakhar Zaman", role: "Batsman", form: 8.4 },
+                { name: "Faheem Ashraf", role: "All-Rounder", form: 8.2 }, { name: "Khushdil Shah", role: "All-Rounder", form: 8.0 },
+                { name: "Mohammad Haris", role: "WK-Batsman", form: 8.2 }, { name: "Mohammad Wasim Jr.", role: "Bowler", form: 8.3 },
+                { name: "Babar Azam", role: "Batsman", form: 9.4 }, { name: "Abrar Ahmed", role: "Bowler", form: 8.1 },
+                { name: "Shaheen Afridi", role: "Bowler", form: 9.3 }, { name: "Hasan Nawaz", role: "Batsman", form: 8.1 },
+                { name: "Mohammad Nawaz", role: "All-Rounder", form: 8.0 }, { name: "Salman Mirza", role: "Bowler", form: 8.2 },
+                { name: "Naseem Shah", role: "Bowler", form: 8.4 }, { name: "Sahibzada Farhan", role: "WK-Batsman", form: 7.9 },
+                { name: "Saim Ayub", role: "Batsman", form: 8.3 }
+            ]
+            },
+             {
+            name: "South Africa", flag: "🇿🇦", players: [ // Added South Africa back if removed accidentally
+                { name: 'Quinton de Kock', role: 'WK-Batsman', form: 9.0 }, { name: 'Temba Bavuma', role: 'Batsman', form: 8.3 }, { name: 'Aiden Markram', role: 'Batsman', form: 8.7 },
+                { name: 'Rassie van der Dussen', role: 'Batsman', form: 8.5 }, { name: 'David Miller', role: 'Batsman', form: 8.9 }, { name: 'Heinrich Klaasen', role: 'WK-Batsman', form: 8.6 },
+                { name: 'Wayne Parnell', role: 'All-Rounder', form: 8.1 }, { name: 'Keshav Maharaj', role: 'Bowler', form: 8.4 }, { name: 'Kagiso Rabada', role: 'Bowler', form: 9.4 },
+                { name: 'Anrich Nortje', role: 'Bowler', form: 9.1 }, { name: 'Lungi Ngidi', role: 'Bowler', form: 8.8 }, { name: 'Tabraiz Shamsi', role: 'Bowler', form: 8.5 },
+                { name: 'Reeza Hendricks', role: 'Batsman', form: 7.8 }, { name: 'Dwaine Pretorius', role: 'All-Rounder', form: 7.6 }, { name: 'Marco Jansen', role: 'All-Rounder', form: 7.9 }
+             ]
+            },
+            {
+            name: "Sri Lanka", flag: "🇱🇰", players: [
+                { name: "Charith Asalanka", role: "All-Rounder", form: 8.4 }, { name: "Pathum Nissanka", role: "Batsman", form: 8.8 },
+                { name: "Kusal Mendis", role: "WK-Batsman", form: 8.7 }, { name: "Kusal Perera", role: "WK-Batsman", form: 8.3 },
+                { name: "Nuwanidu Fernando", role: "Batsman", form: 7.9 }, { name: "Kamindu Mendis", role: "All-Rounder", form: 8.2 },
+                { name: "Kamil Mishara", role: "WK-Batsman", form: 7.7 }, { name: "Dasun Shanaka", role: "All-Rounder", form: 8.2 },
+                { name: "Wanindu Hasaranga", role: "All-Rounder", form: 9.5 }, { name: "Dunith Wellalage", role: "All-Rounder", form: 8.4 },
+                { name: "Chamika Karunaratne", role: "All-Rounder", form: 8.0 }, { name: "Maheesh Theekshana", role: "Bowler", form: 8.7 },
+                { name: "Dushmantha Chameera", role: "Bowler", form: 8.4 }, { name: "Matheesha Pathirana", role: "Bowler", form: 8.2 },
+                { name: "Nuwan Thushara", role: "Bowler", form: 7.9 }
+            ]
+            },
+            {
+            name: "Bangladesh", flag: "🇧🇩", players: [
+                { name: "Litton Das", role: "WK-Batsman", form: 8.6 }, { name: "Tanzid Hasan", role: "Batsman", form: 7.9 },
+                { name: "Parvez Hossain Emon", role: "Batsman", form: 8.0 }, { name: "Saif Hassan", role: "Batsman", form: 7.8 },
+                { name: "Towhid Hridoy", role: "Batsman", form: 8.3 }, { name: "Jaker Ali Anik", role: "WK-Batsman", form: 7.7 },
+                { name: "Shamim Hossain", role: "All-Rounder", form: 8.0 }, { name: "Nurul Hasan Sohan", role: "WK-Batsman", form: 7.8 },
+                { name: "Mahedi Hasan", role: "All-Rounder", form: 8.3 }, { name: "Rishad Hossain", role: "Bowler", form: 8.0 },
+                { name: "Nasum Ahmed", role: "Bowler", form: 8.2 }, { name: "Mustafizur Rahman", role: "Bowler", form: 8.4 },
+                { name: "Tanzim Hasan Sakib", role: "Bowler", form: 8.0 }, { name: "Taskin Ahmed", role: "Bowler", form: 8.8 },
+                { name: "Shoriful Islam", role: "Bowler", form: 8.0 }
+            ]
+            },
+            {
+            name: "New Zealand", flag: "🇳🇿", players: [
+                { name: "Devon Conway", role: "WK-Batsman", form: 8.7 }, { name: "Finn Allen", role: "Batsman", form: 8.2 },
+                { name: "Mark Chapman", role: "Batsman", form: 8.4 }, { name: "Tim Seifert", role: "WK-Batsman", form: 7.9 },
+                { name: "Will Young", role: "Batsman", form: 8.0 }, { name: "Daryl Mitchell", role: "All-Rounder", form: 8.5 },
+                { name: "Rachin Ravindra", role: "All-Rounder", form: 8.2 }, { name: "Michael Bracewell", role: "All-Rounder", form: 8.3 },
+                { name: "Mitchell Santner", role: "All-Rounder", form: 8.7 }, { name: "Adam Milne", role: "Bowler", form: 8.4 },
+                { name: "Ben Sears", role: "Bowler", form: 7.8 }, { name: "Lockie Ferguson", role: "Bowler", form: 8.5 },
+                { name: "Tim Southee", role: "Bowler", form: 8.6 }, { name: "Ish Sodhi", role: "Bowler", form: 8.3 },
+                { name: "Matt Henry", role: "Bowler", form: 8.2 }
+            ]
+            },
+            {
+            name: "West Indies", flag: "🇧🇧", players: [ // Corrected WI Flag
+                { name: "Nicholas Pooran", role: "WK-Batsman", form: 9.0 }, { name: "Kyle Mayers", role: "All-Rounder", form: 8.2 },
+                { name: "Brandon King", role: "Batsman", form: 8.4 }, { name: "Yannic Cariah", role: "Bowler", form: 8.1 },
+                { name: "Alzarri Joseph", role: "Bowler", form: 8.6 }, { name: "Sheldon Cottrell", role: "Bowler", form: 8.3 },
+                { name: "Odean Smith", role: "All-Rounder", form: 8.1 }, { name: "Shamarh Brooks", role: "Batsman", form: 8.2 },
+                { name: "Rovman Powell", role: "All-Rounder", form: 8.7 }, { name: "Evin Lewis", role: "Batsman", form: 8.5 },
+                { name: "Jason Holder", role: "All-Rounder", form: 8.7 }, { name: "Akeal Hosein", role: "Bowler", form: 8.9 },
+                { name: "Obed McCoy", role: "Bowler", form: 8.1 }, { name: "Johnson Charles", role: "WK-Batsman", form: 7.8 },
+                { name: "Raymon Reifer", role: "All-Rounder", form: 7.9 }
+            ]
+            },
+            
+            {
+            name: "Afghanistan", flag: "🇦🇫", players: [ // Added Afghanistan
+                { name: 'Rahmanullah Gurbaz', role: 'WK-Batsman', form: 8.6 }, { name: 'Ibrahim Zadran', role: 'Batsman', form: 8.4 }, { name: 'Hazratullah Zazai', role: 'Batsman', form: 7.9 },
+                { name: 'Mohammad Nabi', role: 'All-Rounder', form: 8.8 }, { name: 'Gulbadin Naib', role: 'All-Rounder', form: 8.0 }, { name: 'Azmatullah Omarzai', role: 'All-Rounder', form: 8.2 },
+                { name: 'Karim Janat', role: 'All-Rounder', form: 7.6 }, { name: 'Rashid Khan', role: 'Bowler', form: 9.7 }, { name: 'Mujeeb Ur Rahman', role: 'Bowler', form: 8.9 },
+                { name: 'Fazalhaq Farooqi', role: 'Bowler', form: 8.7 }, { name: 'Naveen-ul-Haq', role: 'Bowler', form: 8.5 }, { name: 'Fareed Ahmad', role: 'Bowler', form: 8.1 },
+                { name: 'Ikram Alikhil', role: 'WK-Batsman', form: 7.7 }, { name: 'Najibullah Zadran', role: 'Batsman', form: 8.3 }, { name: 'Qais Ahmad', role: 'Bowler', form: 7.8 }
+            ]
+            }
+            // Removed Netherlands, Namibia, Scotland, Ireland
+        ],
+
+                    venues: [
+            // === India (Major and Secondary Venues) ===
+            { name: 'Wankhede Stadium', city: 'Mumbai', country: 'India', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'Eden Gardens', city: 'Kolkata', country: 'India', avgScore: 165, pitchType: 'Damp / Slow & Low', boundarySize: 'Large' },
+            { name: 'M. Chinnaswamy Stadium', city: 'Bangalore', country: 'India', avgScore: 180, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+            { name: 'Arun Jaitley Stadium', city: 'Delhi', country: 'India', avgScore: 170, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Medium' },
+            { name: 'MA Chidambaram Stadium', city: 'Chennai', country: 'India', avgScore: 160, pitchType: 'Damp / Slow & Low', boundarySize: 'Large' },
+            { name: 'Narendra Modi Stadium', city: 'Ahmedabad', country: 'India', avgScore: 172, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+            { name: 'HPCA Stadium', city: 'Dharamshala', country: 'India', avgScore: 168, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+            { name: 'Rajiv Gandhi Intl. Stadium', city: 'Hyderabad', country: 'India', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'Ekana Cricket Stadium', city: 'Lucknow', country: 'India', avgScore: 160, pitchType: 'Slow / Variable Bounce', boundarySize: 'Large' },
+            { name: 'Holkar Cricket Stadium', city: 'Indore', country: 'India', avgScore: 185, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+            { name: 'VCA Stadium', city: 'Nagpur', country: 'India', avgScore: 155, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Medium' },
+            { name: 'MCA International Stadium', city: 'Pune', country: 'India', avgScore: 178, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'JSCA Intl. Stadium Complex', city: 'Ranchi', country: 'India', avgScore: 160, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+            { name: 'ACA-VDCA Stadium', city: 'Visakhapatnam', country: 'India', avgScore: 172, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+
+            // === Australia ===
+            { name: 'Melbourne Cricket Ground', city: 'Melbourne', country: 'Australia', avgScore: 170, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+            { name: 'Sydney Cricket Ground', city: 'Sydney', country: 'Australia', avgScore: 168, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Large' },
+            { name: 'Adelaide Oval', city: 'Adelaide', country: 'Australia', avgScore: 172, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'Perth Stadium (Optus Stadium)', city: 'Perth', country: 'Australia', avgScore: 165, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
+            { name: 'The Gabba', city: 'Brisbane', country: 'Australia', avgScore: 170, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+            { name: 'Bellerive Oval', city: 'Hobart', country: 'Australia', avgScore: 160, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+            { name: 'WACA Ground', city: 'Perth', country: 'Australia', avgScore: 172, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+            { name: 'Manuka Oval', city: 'Canberra', country: 'Australia', avgScore: 155, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+
+            // === England / UK / Netherlands ===
+            { name: 'Lord\'s', city: 'London', country: 'England', avgScore: 165, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
+            { name: 'Old Trafford', city: 'Manchester', country: 'England', avgScore: 162, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+            { name: 'The Oval', city: 'London', country: 'England', avgScore: 168, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'Edgbaston', city: 'Birmingham', country: 'England', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'Trent Bridge', city: 'Nottingham', country: 'England', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+            { name: 'Headingley', city: 'Leeds', country: 'England', avgScore: 170, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+            { name: 'Sophia Gardens', city: 'Cardiff', country: 'Wales', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Rose Bowl (The Ageas Bowl)', city: 'Southampton', country: 'England', avgScore: 170, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+            { name: 'Riverside Ground', city: 'Chester-le-Street', country: 'England', avgScore: 165, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
+            { name: 'County Ground, Bristol', city: 'Bristol', country: 'England', avgScore: 168, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+            { name: 'VRA Cricket Ground', city: 'Amstelveen', country: 'Netherlands', avgScore: 150, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+            { name: 'Sportpark Westvliet', city: 'The Hague', country: 'Netherlands', avgScore: 145, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+            { name: 'Stormont', city: 'Belfast', country: 'Northern Ireland', avgScore: 160, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+
+            // === Pakistan / UAE (Neutral) ===
+            { name: 'Dubai International Stadium', city: 'Dubai', country: 'UAE', avgScore: 158, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+            { name: 'Sharjah Cricket Stadium', city: 'Sharjah', country: 'UAE', avgScore: 155, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Small' },
+            { name: 'Gaddafi Stadium', city: 'Lahore', country: 'Pakistan', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'National Stadium', city: 'Karachi', country: 'Pakistan', avgScore: 172, pitchType: 'Flat / Batting Paradise', boundarySize: 'Large' },
+            { name: 'Sheikh Zayed Stadium', city: 'Abu Dhabi', country: 'UAE', avgScore: 160, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+            { name: 'Rawalpindi Cricket Stadium', city: 'Rawalpindi', country: 'Pakistan', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'ICC Academy Ground', city: 'Dubai', country: 'UAE', avgScore: 155, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Multan Cricket Stadium', city: 'Multan', country: 'Pakistan', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+
+            // === South Africa ===
+            { name: 'The Wanderers', city: 'Johannesburg', country: 'South Africa', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'Newlands', city: 'Cape Town', country: 'South Africa', avgScore: 168, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Kingsmead', city: 'Durban', country: 'South Africa', avgScore: 170, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+            { name: 'SuperSport Park', city: 'Centurion', country: 'South Africa', avgScore: 178, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+            { name: 'St George\'s Park', city: 'Port Elizabeth', country: 'South Africa', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Mangaung Oval', city: 'Bloemfontein', country: 'South Africa', avgScore: 168, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Buffalo Park', city: 'East London', country: 'South Africa', avgScore: 162, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Willowmoore Park', city: 'Benoni', country: 'South Africa', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+            { name: 'Boland Park', city: 'Paarl', country: 'South Africa', avgScore: 160, pitchType: 'Damp / Slow & Low', boundarySize: 'Large' },
+
+            // === New Zealand ===
+            { name: 'Eden Park', city: 'Auckland', country: 'New Zealand', avgScore: 178, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+            { name: 'Basin Reserve', city: 'Wellington', country: 'New Zealand', avgScore: 165, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
+            { name: 'Hagley Oval', city: 'Christchurch', country: 'New Zealand', avgScore: 168, pitchType: 'Green / Pacer Friendly', boundarySize: 'Large' },
+            { name: 'Seddon Park', city: 'Hamilton', country: 'New Zealand', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'Bay Oval', city: 'Mount Maunganui', country: 'New Zealand', avgScore: 172, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'McLean Park', city: 'Napier', country: 'New Zealand', avgScore: 172, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'University Oval', city: 'Dunedin', country: 'New Zealand', avgScore: 162, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+            { name: 'Queenstown Events Centre', city: 'Queenstown', country: 'New Zealand', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Small' },
+
+            // === West Indies / Caribbean Islands ===
+            { name: 'Kensington Oval', city: 'Bridgetown', country: 'Barbados', avgScore: 172, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Queen\'s Park Oval', city: 'Port of Spain', country: 'Trinidad', avgScore: 168, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Large' },
+            { name: 'Sabina Park', city: 'Kingston', country: 'Jamaica', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Daren Sammy Cricket Ground', city: 'Gros Islet', country: 'St Lucia', avgScore: 170, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'Sir Vivian Richards Stadium', city: 'North Sound', country: 'Antigua', avgScore: 162, pitchType: 'Damp / Slow & Low', boundarySize: 'Large' },
+            { name: 'Providence Stadium', city: 'Providence', country: 'Guyana', avgScore: 162, pitchType: 'Damp / Slow & Low', boundarySize: 'Large' },
+            { name: 'Brian Lara Cricket Academy', city: 'Tarouba', country: 'Trinidad & Tobago', avgScore: 168, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Arnos Vale Ground', city: 'Kingstown', country: 'St Vincent & The G.', avgScore: 145, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+            { name: 'Warner Park', city: 'Basseterre', country: 'St Kitts & Nevis', avgScore: 168, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+
+            // === Sri Lanka / Bangladesh ===
+            { name: 'R. Premadasa Stadium', city: 'Colombo', country: 'Sri Lanka', avgScore: 170, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+            { name: 'Pallekele International Stadium', city: 'Pallekele', country: 'Sri Lanka', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+            { name: 'Galle International Stadium', city: 'Galle', country: 'Sri Lanka', avgScore: 155, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Medium' },
+            { name: 'Mahinda Rajapaksa Stadium', city: 'Hambantota', country: 'Sri Lanka', avgScore: 158, pitchType: 'Standard / Balanced', boundarySize: 'Large' },
+            { name: 'Shere Bangla National Stadium', city: 'Dhaka', country: 'Bangladesh', avgScore: 165, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+            { name: 'Zohur Ahmed Chowdhury Stadium', city: 'Chattogram', country: 'Bangladesh', avgScore: 168, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Sylhet International Stadium', city: 'Sylhet', country: 'Bangladesh', avgScore: 155, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+
+            // === Other International / Associate Nations ===
+            { name: 'Nassau Co. Intl. Cricket Stadium', city: 'New York', country: 'USA', avgScore: 110, pitchType: 'Spicy / Seam & Uneven', boundarySize: 'Medium' },
+            { name: 'Central Broward Park', city: 'Lauderhill, Florida', country: 'USA', avgScore: 175, pitchType: 'Flat / Batting Paradise', boundarySize: 'Medium' },
+            { name: 'Grand Prairie Stadium', city: 'Dallas, Texas', country: 'USA', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Moosa Stadium', city: 'Pearland, Texas', country: 'USA', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Harare Sports Club', city: 'Harare', country: 'Zimbabwe', avgScore: 168, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Queens Sports Club', city: 'Bulawayo', country: 'Zimbabwe', avgScore: 165, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Malahide Cricket Club Ground', city: 'Dublin', country: 'Ireland', avgScore: 170, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+            { name: 'Grange Cricket Club', city: 'Edinburgh', country: 'Scotland', avgScore: 158, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+            { name: 'Mannofield Park', city: 'Aberdeen', country: 'Scotland', avgScore: 155, pitchType: 'Green / Pacer Friendly', boundarySize: 'Medium' },
+            { name: 'Al Amerat Cricket Ground', city: 'Muscat', country: 'Oman', avgScore: 155, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Medium' },
+            { name: 'Tribhuvan University Ground', city: 'Kirtipur', country: 'Nepal', avgScore: 165, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Medium' },
+            { name: 'Maple Leaf North-West Ground', city: 'King City', country: 'Canada', avgScore: 168, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Entebbe Cricket Oval', city: 'Entebbe', country: 'Uganda', avgScore: 140, pitchType: 'Dry / Spinner Friendly', boundarySize: 'Medium' },
+            { name: 'Amini Park', city: 'Port Moresby', country: 'PNG', avgScore: 150, pitchType: 'Standard / Balanced', boundarySize: 'Medium' },
+            { name: 'Gymkhana Club Ground', city: 'Nairobi', country: 'Kenya', avgScore: 140, pitchType: 'Damp / Slow & Low', boundarySize: 'Medium' },
+        ],
             pitchTypes: [
                 { type: 'Flat / Batting Paradise', impact: 0.05 }, { type: 'Green / Pacer Friendly', impact: -0.05 },
                 { type: 'Dry / Spinner Friendly', impact: -0.04 }, { type: 'Damp / Slow & Low', impact: -0.06 },
@@ -416,7 +528,7 @@ let isBackendConnected = false;
 
         let selectedTeams = [], team1Squad = [], team2Squad = [], activeTab = 'score-predictor';
         const charts = {};
-        const API_URL = 'http://127.0.0.1:5000'; 
+        // const API_URL = 'http://127.0.0.1:5000'; 
 
         document.addEventListener('DOMContentLoaded', () => {
             populateTeams();
@@ -432,7 +544,8 @@ let isBackendConnected = false;
         async function checkBackendStatus() {
   const banner = document.getElementById("status-banner");
   try {
-    const res = await fetch(`${API_BASE}/api/status`);
+    // Use API_BASE which is defined to handle both local and deployed URLs
+    const res = await fetch(`${API_BASE}/api/status`); 
     const data = await res.json();
     if (data.status === "ok") {
       banner.textContent = "✅ Connected to backend";
@@ -445,11 +558,13 @@ let isBackendConnected = false;
     isBackendConnected = false;
   }
 }
-setInterval(checkBackendStatus, 8000);
+// Keep checking periodically
+setInterval(checkBackendStatus, 8000); 
 
 
         function populateTeams() {
             const grid = document.getElementById('team-selection-grid');
+            grid.innerHTML = ''; // Clear existing teams first
             cricketData.teams.forEach(team => {
                 const card = document.createElement('div');
                 card.className = 'team-card p-4 rounded-lg text-center cursor-pointer';
@@ -506,9 +621,15 @@ setInterval(checkBackendStatus, 8000);
             if (balls > 5) {
                 const newOvers = overs + 1;
                 const newBalls = balls - 6;
-                inputElement.value = `${newOvers}.${newBalls}`;
+                 // Ensure single digit for balls after calculation
+                 inputElement.value = `${newOvers}.${newBalls}`;
+            } else if (value > 20) {
+                 inputElement.value = '20.0'; // Cap at 20 overs
+            } else if (value < 0) {
+                 inputElement.value = '0.0'; // Minimum 0 overs
             }
         }
+
 
         function handleTeamSelection(teamName, card) {
             const index = selectedTeams.indexOf(teamName);
@@ -572,6 +693,8 @@ setInterval(checkBackendStatus, 8000);
             const table = DLS_RESOURCES[wickets]; const keys = Object.keys(table).map(Number).sort((a,b)=>a-b);
             if (table[overs]) return table[overs]; if (overs >= keys[keys.length-1]) return table[keys[keys.length-1]]; if (overs <= keys[0]) return table[keys[0]];
             const l = Math.max(...keys.filter(k => k <= overs)), u = Math.min(...keys.filter(k => k >= overs));
+            // Prevent division by zero if l and u are the same (should be handled by boundary checks)
+             if (u - l === 0) return table[l]; 
             return table[l] + (table[u] - table[l]) * (overs - l) / (u - l);
         }
 
@@ -582,6 +705,8 @@ setInterval(checkBackendStatus, 8000);
                 if (!start) start = timestamp;
                 const progress = Math.min((timestamp - start) / duration, 1);
                 current = progress * finalValue;
+                 // Ensure non-negative values before displaying
+                 current = Math.max(0, current); 
                 element.textContent = isFloat ? current.toFixed(2) : (isPercentage ? `${Math.floor(current)}%` : Math.floor(current));
                 if (progress < 1) window.requestAnimationFrame(step);
             };
@@ -596,43 +721,72 @@ async function apiCall(endpoint, payload) {
       const current_rate = p.score / p.overs;
       const remaining_overs = 20 - p.overs;
       const wickets_in_hand = 10 - p.wickets;
-      // Project remaining overs at a rate that accelerates based on wickets in hand
-      const projected_death_rate = current_rate * (1 + (wickets_in_hand * 0.05));
-      const remaining_runs = remaining_overs * projected_death_rate;
+      
+      // Base projected rate adjusted for wickets left
+      let projected_rate = current_rate * (1 + (wickets_in_hand * 0.04)); 
+
+      // Find pitch and weather impact factors
+      const pitchImpact = cricketData.pitchTypes.find(pt => pt.type === p.pitch)?.impact || 0;
+      const weatherImpact = cricketData.weatherConditions.find(wc => wc.label === p.weather)?.impact || 0;
+      
+      // Apply impacts to the projected rate for remaining overs
+      // Make impacts additive/subtractive to the rate, not multiplicative on score
+      projected_rate = projected_rate + (pitchImpact * 10) + (weatherImpact * 10); // Scale impact for runs/over
+      projected_rate = Math.max(3, projected_rate); // Ensure minimum run rate projection
+
+      const remaining_runs = remaining_overs * projected_rate;
       let avg = Math.ceil(p.score + remaining_runs);
+      
+      // Blend with venue average, weighted towards current projection
       const venueData = cricketData.venues.find(v => v.name === p.venue);
       if (venueData) {
-        avg = (avg * 0.7) + (venueData.avgScore * 0.3); // Anchor to venue average
+        avg = (avg * 0.8) + (venueData.avgScore * 0.2); 
       }
-      return {
-        low: Math.ceil(avg * 0.9),
-        avg: Math.ceil(avg),
-        high: Math.ceil(avg * 1.1)
-      };
+      
+      avg = Math.ceil(avg);
+      // Ensure range is reasonable and low >= current score
+      const low = Math.max(p.score, Math.ceil(avg * 0.90)); // Narrower low range
+      const high = Math.ceil(avg * 1.10); // Narrower high range
+
+      return { low, avg, high };
     },
 
     win_probability: p => {
-      const b = Math.floor(p.overs) * 6 + (p.overs * 10 % 10);
-      const crr = p.overs > 0 ? p.score / p.overs : 0;
-      if (p.score >= p.target)
-        return { win_prob: 100, rrr: 0, runs_needed: 0, balls_left: 120 - b, crr };
-      if (p.wickets >= 10 || b >= 120)
-        return { win_prob: 0, rrr: Infinity, runs_needed: p.target - p.score, balls_left: 0, crr };
-      const r = p.target - p.score;
-      const bl = 120 - b;
-      const rrr = bl > 0 ? (r / bl) * 6 : 999;
-      let prob = 50 - (rrr - crr) * 10 + (10 - p.wickets) * 5;
-      const pitchImpact = cricketData.pitchTypes.find(pt => pt.type === p.pitch)?.impact || 0;
-      const weatherImpact = cricketData.weatherConditions.find(wc => wc.label === p.weather)?.impact || 0;
-      prob = prob * (1 + pitchImpact + weatherImpact);
-      return {
-        win_prob: Math.round(Math.min(99, Math.max(1, prob))),
-        rrr,
-        runs_needed: r,
-        balls_left: bl,
-        crr
-      };
+        // Correct calculation for balls bowled from overs like 10.5
+        const oversInt = Math.floor(p.overs);
+        const ballsFraction = Math.round((p.overs - oversInt) * 10);
+        const b = oversInt * 6 + ballsFraction; 
+
+        const crr = p.overs > 0 ? p.score / p.overs : 0;
+        
+        if (p.score >= p.target)
+            return { win_prob: 100, rrr: 0, runs_needed: 0, balls_left: Math.max(0, 120 - b), crr }; // Ensure balls_left >= 0
+        if (p.wickets >= 10 || b >= 120)
+            return { win_prob: 0, rrr: Infinity, runs_needed: p.target - p.score, balls_left: Math.max(0, 120 - b), crr }; // Ensure balls_left >= 0
+        
+        const r = p.target - p.score;
+        const bl = 120 - b;
+        const rrr = bl > 0 ? (r / bl) * 6 : Infinity; // Use Infinity if balls left is 0
+        
+        let prob = 50 - (rrr - crr) * 10 + (10 - p.wickets) * 5;
+        
+        const pitchImpact = cricketData.pitchTypes.find(pt => pt.type === p.pitch)?.impact || 0;
+        const weatherImpact = cricketData.weatherConditions.find(wc => wc.label === p.weather)?.impact || 0;
+        
+        prob = prob * (1 + pitchImpact + weatherImpact); // Apply impact factors
+        
+        // Ensure probability is within 1-99 range
+        prob = Math.max(1, Math.min(99, prob)); 
+
+        return {
+            win_prob: Math.round(prob),
+            rrr: isFinite(rrr) ? rrr : 999.99, // Handle infinity for display
+            runs_needed: r,
+            balls_left: bl,
+            crr
+        };
     },
+
 
     dls_calculate: p => ({
       target: Math.floor(
@@ -653,9 +807,13 @@ async function apiCall(endpoint, payload) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-    if (!response.ok) throw new Error("Network error");
+    if (!response.ok) {
+        console.error("Backend error:", response.status, await response.text());
+        throw new Error("Network error");
+    }
     return await response.json();
   } catch (error) {
+    console.error("API call failed:", error);
     // fallback to local simulation if backend call fails
     updateBackendStatus("failed");
     return new Promise(res => setTimeout(() => res(logic[endpoint](payload)), 500));
@@ -668,41 +826,57 @@ async function apiCall(endpoint, payload) {
             const wicketsInput = document.getElementById('sp-wickets').value;
             const oversInput = document.getElementById('sp-overs').value;
             const venueInput = document.getElementById('sp-venue').value;
+            const pitchInput = document.getElementById('sp-pitch').value; // Get pitch
+            const weatherInput = document.getElementById('sp-weather').value; // Get weather
 
             const score = parseInt(scoreInput);
             const wickets = parseInt(wicketsInput);
             const overs = parseFloat(oversInput);
             const venueName = venueInput;
+            const pitch = pitchInput; 
+            const weather = weatherInput;
 
-            // Improved Validation
+            // Improved Validation - ensure all are selected/valid
             if (isNaN(score) || score < 0 ||
                 isNaN(wickets) || wickets < 0 || wickets > 10 ||
                 isNaN(overs) || overs < 0 || overs > 20 ||
-                !venueName) { // Check if venueName is empty or null
-                console.error("Invalid input for score prediction:", { scoreInput, wicketsInput, oversInput, venueInput });
-                // Optionally show an error to the user via UI instead of console
+                !venueName || !pitch || !weather) { 
+                console.error("Invalid input for score prediction:", { score, wickets, overs, venueName, pitch, weather });
+                // Optionally provide user feedback here
                 return; 
             }
             
-            const payload = { score, wickets, overs, venue: venueName }; 
+            // Pass pitch and weather in payload
+            const payload = { score, wickets, overs, venue: venueName, pitch, weather }; 
 
             const venue = cricketData.venues.find(v => v.name === venueName);
             if (!venue) {
                 console.error("Selected venue not found in data:", venueName);
-                return; // Stop if venue data is missing
+                return; 
             }
             document.getElementById('sp-venue-avg').textContent = venue.avgScore;
             document.getElementById('sp-boundary').textContent = venue.boundarySize;
-            document.getElementById('sp-weather-impact').textContent = `${(cricketData.weatherConditions.find(w=>w.label===document.getElementById('sp-weather').value).impact + 1) *100}%`;
+            
+            const selectedWeather = cricketData.weatherConditions.find(w => w.label === weather);
+            if (selectedWeather) {
+                 document.getElementById('sp-weather-impact').textContent = `${Math.round(((selectedWeather.impact || 0) + 1) * 100)}%`; // Round percentage
+            } else {
+                 document.getElementById('sp-weather-impact').textContent = `100%`; 
+            }
+
             if (selectedTeams.length > 0) document.getElementById('sp-team-form').textContent = `${getTeamForm(team1Squad, cricketData.teams.find(t=>t.name===selectedTeams[0])).overall.toFixed(1)}/10`;
             
-            document.getElementById('score-prediction-output').classList.remove('hidden'); // Show the output section
+            document.getElementById('score-prediction-output').classList.remove('hidden'); 
             
             const result = await apiCall('predict_score', payload);
-            if (result) {
+            console.log("Score Prediction Result:", result); // Debug log
+            if (result && typeof result.low !== 'undefined') { // Check if result is valid
                 animateCount(document.getElementById('sp-low'), result.low);
                 animateCount(document.getElementById('sp-avg'), result.avg);
                 animateCount(document.getElementById('sp-high'), result.high);
+            } else {
+                 console.error("Invalid result received from predict_score", result);
+                 // Optionally display an error in the UI
             }
         }
         
@@ -714,24 +888,33 @@ async function apiCall(endpoint, payload) {
             };
 
             const numericPayload = { target: payload.target, score: payload.score, wickets: payload.wickets, overs: payload.overs };
-            if (Object.values(numericPayload).some(v => isNaN(v))) {
-                console.error("Invalid numeric input for win probability");
+            // Enhanced Validation
+            if (Object.values(numericPayload).some(v => isNaN(v) || v < 0) || 
+                payload.wickets > 10 || payload.overs > 20 ||
+                !payload.pitch || !payload.weather) {
+                console.error("Invalid input for win probability:", payload);
+                // Optionally show UI error
                 return;
             }
-            if (!payload.pitch || !payload.weather) {
-                console.error("Pitch or weather not selected");
-                return;
-            }
-
+            
             document.getElementById('win-probability-output').classList.remove('hidden');
             const result = await apiCall('win_probability', payload);
-            if (result) {
+             console.log("Win Probability Result:", result); // Debug log
+            if (result && typeof result.win_prob !== 'undefined') { // Check result validity
                 animateCount(document.getElementById('wp-runs-needed'), result.runs_needed);
                 animateCount(document.getElementById('wp-balls-left'), result.balls_left);
                 animateCount(document.getElementById('wp-crr'), result.crr, {isFloat: true});
-                if(isFinite(result.rrr)) animateCount(document.getElementById('wp-rrr'), result.rrr, {isFloat: true}); else document.getElementById('wp-rrr').textContent = "N/A";
+                // Display RRR correctly even if very high (instead of N/A)
+                const rrrDisplay = (result.rrr > 999) ? "---" : result.rrr.toFixed(2);
+                document.getElementById('wp-rrr').textContent = rrrDisplay; // Direct set for high/inf RRR
+                if(isFinite(result.rrr) && result.rrr < 999) { // Animate only if finite and reasonable
+                    animateCount(document.getElementById('wp-rrr'), result.rrr, {isFloat: true}); 
+                }
                 animateCount(document.getElementById('wp-percentage'), result.win_prob, {isPercentage: true});
                 updateWinProbabilityChart(result.win_prob);
+            } else {
+                 console.error("Invalid result received from win_probability", result);
+                  // Optionally display an error in the UI
             }
         }
         
@@ -746,13 +929,17 @@ async function apiCall(endpoint, payload) {
 
         async function getDlsTarget() {
             const payload = { team1_score: parseInt(document.getElementById('dls-t1-score').value), team1_overs: parseFloat(document.getElementById('dls-t1-overs').value) || 20, team2_overs: parseFloat(document.getElementById('dls-t2-overs').value), team2_wickets_lost: parseInt(document.getElementById('dls-t2-wickets').value) };
-            if (isNaN(payload.team1_score) || isNaN(payload.team2_overs) || isNaN(payload.team2_wickets_lost)) return;
-            if(payload.team2_overs > payload.team1_overs) return;
+            if (isNaN(payload.team1_score) || isNaN(payload.team2_overs) || isNaN(payload.team2_wickets_lost) || payload.team2_wickets_lost < 0 || payload.team2_wickets_lost > 10 ) return; // Added wicket validation
+            if(payload.team2_overs > payload.team1_overs || payload.team2_overs <= 0) return; // Added overs validation
             document.getElementById('dls-output').classList.remove('hidden');
             const result = await apiCall('dls_calculate', payload);
-            if (result) {
+             console.log("DLS Result:", result); // Debug log
+            if (result && typeof result.target !== 'undefined') { // Check result validity
                 animateCount(document.getElementById('dls-target'), result.target);
                 document.getElementById('dls-revised-overs').textContent = payload.team2_overs;
+            } else {
+                 console.error("Invalid result received from dls_calculate", result);
+                 // Optionally display an error in the UI
             }
         }
 
@@ -761,28 +948,51 @@ async function apiCall(endpoint, payload) {
             if(isNaN(score) || isNaN(oversDone) || oversDone >= 20 || oversDone <= 0) return;
             document.getElementById('run-rate-output').classList.remove('hidden');
             const crr = score / oversDone;
-            const labels = Array.from({length: 20 - Math.floor(oversDone)}, (_, i) => Math.ceil(oversDone) + i);
+            // Ensure labels start from the next whole over if mid-over
+            const startOver = Math.floor(oversDone) + 1; 
+            const labels = Array.from({length: 20 - startOver + 1}, (_, i) => startOver + i); // +1 to include 20th over
+            
+             // Calculate projected scores based on whole overs
             const projected = labels.map(o => Math.round(score + (o - oversDone) * crr));
+            
+             // Prepend current score at current over for smoother start
+            labels.unshift(oversDone.toFixed(1)); 
+            projected.unshift(score); 
+
             if (charts.rrt) charts.rrt.destroy();
             const ctx = document.getElementById('run-rate-chart').getContext('2d');
             charts.rrt = new Chart(ctx, {
-                type: 'line', data: { labels, datasets: [{ label: 'Projected Score', data: projected, borderColor: 'var(--primary-blue)', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.4 }] },
-                options: { responsive: true, plugins: { legend: { labels: { color: '#e2e8f0' } } }, scales: { y: { ticks:{color:'#94a3b8'}, grid:{color:'var(--border-color)'}, title:{display:true,text:'Projected Score',color:'#e2e8f0'}}, x: { ticks:{color:'#94a3b8'}, grid:{color:'var(--border-color)'}, title:{display:true,text:'Overs',color:'#e2e8f0'}}}}
+                type: 'line', data: { labels, datasets: [{ label: 'Projected Score', data: projected, borderColor: 'var(--primary-blue)', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.1 }] }, // Reduced tension for less curve
+                options: { responsive: true, plugins: { legend: { labels: { color: '#e2e8f0' } } }, scales: { y: { beginAtZero: true, ticks:{color:'#94a3b8'}, grid:{color:'var(--border-color)'}, title:{display:true,text:'Projected Score',color:'#e2e8f0'}}, x: { ticks:{color:'#94a3b8'}, grid:{color:'var(--border-color)'}, title:{display:true,text:'Overs',color:'#e2e8f0'}}}}
             });
         }
         
         function getTeamForm(squad, teamData) {
             const r = { b:0, bo:0, ar:0, wk:0, bc:0, boc:0, arc:0, wkc:0 };
-            squad.forEach(name => { const p = teamData.players.find(pl => pl.name === name); if(p) switch(p.role){ case 'Batsman':r.b+=p.form;r.bc++;break; case 'Bowler':r.bo+=p.form;r.boc++;break; case 'All-Rounder':r.ar+=p.form;r.arc++;break; case 'WK-Batsman':r.wk+=p.form;r.wkc++;break; } });
+            squad.forEach(name => { 
+                const p = teamData.players.find(pl => pl.name === name); 
+                if(!p) { console.warn(`Player not found: ${name} in team ${teamData.name}`); return; } // Add warning
+                switch(p.role){ 
+                    case 'Batsman':r.b+=p.form;r.bc++;break; 
+                    case 'Bowler':r.bo+=p.form;r.boc++;break; 
+                    case 'All-Rounder':r.ar+=p.form;r.arc++;break; 
+                    case 'WK-Batsman':r.wk+=p.form;r.wkc++;break; 
+                } 
+            });
+            // Correction in wicketKeeping calculation division
             return {
-                batting: (r.bc+r.wkc)>0?(r.b+r.wk)/(r.bc+r.wkc):0, bowling: r.boc>0?r.bo/r.boc:0, allRounders: r.arc>0?r.ar/r.arc:0, wicketKeeping: r.wkc>0?r.wk/r.arc:0,
-                overall: squad.length>0?(r.b+r.bo+r.ar+r.wk)/squad.length:0
+                batting: (r.bc+r.wkc)>0 ? (r.b+r.wk)/(r.bc+r.wkc) : 0, 
+                bowling: r.boc>0 ? r.bo/r.boc : 0, 
+                allRounders: r.arc>0 ? r.ar/r.arc : 0, 
+                wicketKeeping: r.wkc>0 ? r.wk/r.wkc : 0, // Corrected divisor to wkc
+                overall: squad.length>0 ? (r.b+r.bo+r.ar+r.wk)/squad.length : 0
             };
         }
 
         function updateFormComparisonChart() {
             if(selectedTeams.length < 2 || team1Squad.length < 11 || team2Squad.length < 11) return;
             const [t1d, t2d] = selectedTeams.map(name => cricketData.teams.find(t => t.name === name));
+             if (!t1d || !t2d) { console.error("Team data not found for form comparison."); return; } // Add check
             const f1 = getTeamForm(team1Squad, t1d), f2 = getTeamForm(team2Squad, t2d);
             document.getElementById('form-team1-card').innerHTML = `<p class="text-sm text-slate-400">${t1d.name}</p><p class="text-4xl font-bold text-green-400">${f1.overall.toFixed(1)}</p><p class="text-xs text-slate-500">Overall Form</p>`;
             document.getElementById('form-team2-card').innerHTML = `<p class="text-sm text-slate-400">${t2d.name}</p><p class="text-4xl font-bold text-blue-400">${f2.overall.toFixed(1)}</p><p class="text-xs text-slate-500">Overall Form</p>`;
@@ -800,5 +1010,4 @@ async function apiCall(endpoint, payload) {
     </script>
 </body>
 </html>
-
 
