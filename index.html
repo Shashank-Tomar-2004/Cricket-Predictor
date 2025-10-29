@@ -18,6 +18,7 @@
             --glow-blue: rgba(59, 130, 246, 0.5);
             --primary-green: #22c55e;
             --glow-green: rgba(34, 197, 94, 0.5);
+            --error-red: #f87171; /* Added for error messages */
         }
 
         body {
@@ -132,6 +133,18 @@
             color: #e2e8f0;
         }
         .custom-input-group select option { background-color: var(--bg-color); }
+
+        /* Error Message Style */
+        .error-message {
+            color: var(--error-red);
+            background-color: rgba(248, 113, 113, 0.1); /* Light red background */
+            border: 1px solid rgba(248, 113, 113, 0.3); /* Slightly darker red border */
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
         
     </style>
 </head>
@@ -176,6 +189,9 @@
 
                 <div id="tab-content" class="p-4 bg-slate-800/30 rounded-lg border border-[var(--border-color)] min-h-[450px]">
                     
+                    <!-- General Error Message Area (Hidden by default) -->
+                    <div id="general-error-message" class="error-message hidden mb-4"></div>
+
                     <div id="score-predictor" class="tab-pane fade-in">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             <div class="custom-input-group"><i class="ph-number-circle-one"></i><input type="number" id="sp-score" placeholder="Current Runs"></div>
@@ -186,6 +202,10 @@
                             <div class="custom-input-group"><i class="ph-sun"></i><select id="sp-weather"></select></div>
                         </div>
                         <div class="text-center mt-6"><button id="predict-score-btn" class="custom-btn text-white font-bold py-3 px-8 rounded-lg">Predict Score</button></div>
+                        
+                        <!-- Score Predictor Specific Error Message Area -->
+                        <div id="sp-error-message" class="error-message hidden"></div>
+
                         <div id="score-prediction-output" class="mt-8 hidden">
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-6">
                                 <div class="bg-slate-800/50 p-3 rounded-lg border border-[var(--border-color)]"><p class="text-sm text-slate-400">Team Form</p><p id="sp-team-form" class="text-2xl font-bold">8.5/10</p></div>
@@ -213,6 +233,10 @@
                             <div class="custom-input-group"><i class="ph-sun"></i><select id="wp-weather"></select></div>
                          </div>
                          <div class="text-center mt-6"><button id="calculate-wp-btn" class="custom-btn text-white font-bold py-3 px-8 rounded-lg">Calculate Win %</button></div>
+                         
+                         <!-- Win Probability Specific Error Message Area -->
+                         <div id="wp-error-message" class="error-message hidden"></div>
+
                          <div id="win-probability-output" class="mt-8 grid md:grid-cols-2 gap-8 items-center hidden">
                              <div class="relative w-64 h-64 mx-auto">
                                 <canvas id="win-probability-chart"></canvas>
@@ -234,6 +258,8 @@
                             <div class="custom-input-group"><i class="ph-target"></i><input type="number" id="rrt-target-score" placeholder="Target Score (Optional)"></div>
                         </div>
                          <div class="text-center mt-6"><button id="calculate-rrt-btn" class="custom-btn text-white font-bold py-3 px-8 rounded-lg">Plot Trajectory</button></div>
+                         <!-- Run Rate Specific Error Message Area -->
+                         <div id="rrt-error-message" class="error-message hidden"></div>
                         <div id="run-rate-output" class="mt-6 hidden"><canvas id="run-rate-chart"></canvas></div>
                     </div>
 
@@ -262,6 +288,10 @@
                              </div>
                          </div>
                          <div class="text-center mt-6"><button id="calculate-dls-btn" class="custom-btn text-white font-bold py-3 px-8 text-lg rounded-lg">Calculate DLS Target</button></div>
+                         
+                         <!-- DLS Specific Error Message Area -->
+                         <div id="dls-error-message" class="error-message hidden"></div>
+
                          <div id="dls-output" class="mt-6 p-6 rounded-lg bg-gradient-to-br from-red-900/30 to-amber-900/30 text-center hidden">
                              <p class="text-slate-300">DLS Adjusted Target</p>
                              <p id="dls-target" class="text-7xl font-extrabold text-red-400 my-2">157</p>
@@ -391,7 +421,18 @@ let isBackendConnected = false;
                 { name: "Raymon Reifer", role: "All-Rounder", form: 7.9 }
             ]
             },
-            
+            {
+            name: "Zimbabwe", flag: "🇿🇼", players: [
+                { name: "Sikandar Raza", role: "All-Rounder", form: 9.1 }, { name: "Craig Ervine", role: "Batsman", form: 8.7 },
+                { name: "Sean Williams", role: "All-Rounder", form: 8.8 }, { name: "Ryan Burl", role: "All-Rounder", form: 8.5 },
+                { name: "Blessing Muzarabani", role: "Bowler", form: 8.3 }, { name: "Wesley Madhevere", role: "Batsman", form: 7.9 },
+                { name: "Regis Chakabva", role: "WK-Batsman", form: 7.7 }, { name: "Milton Shumba", role: "All-Rounder", form: 8.1 },
+                { name: "Richard Ngarava", role: "Bowler", form: 8.4 }, { name: "Wellington Masakadza", role: "Bowler", form: 8.0 },
+                { name: "Luke Jongwe", role: "All-Rounder", form: 8.0 }, { name: "Tendai Chatara", role: "Bowler", form: 8.2 },
+                { name: "Brandon Mavuta", role: "Bowler", form: 8.2 }, { name: "Clive Madande", role: "WK-Batsman", form: 7.7 },
+                { name: "Innocent Kaia", role: "Batsman", form: 7.8 }
+            ]
+            },
             {
             name: "Afghanistan", flag: "🇦🇫", players: [ // Added Afghanistan
                 { name: 'Rahmanullah Gurbaz', role: 'WK-Batsman', form: 8.6 }, { name: 'Ibrahim Zadran', role: 'Batsman', form: 8.4 }, { name: 'Hazratullah Zazai', role: 'Batsman', form: 7.9 },
@@ -683,20 +724,48 @@ setInterval(checkBackendStatus, 8000);
             activeTab = tabId;
             document.querySelectorAll('.predictor-tab').forEach(tab => tab.classList.toggle('tab-active', tab.dataset.tab === tabId));
             document.querySelectorAll('.tab-pane').forEach(pane => pane.style.display = 'none');
+            // Hide all error messages when switching tabs
+            hideAllErrorMessages(); 
             document.getElementById(tabId).style.display = 'block';
             if (tabId === 'form-comparison') updateFormComparisonChart();
         }
         
+        // --- Helper Function to show error messages ---
+        function showErrorMessage(tabId, message) {
+            hideAllErrorMessages(); // Hide any existing errors first
+            const errorDivId = `${tabId.split('-')[0]}-error-message`; // e.g., 'sp-error-message'
+            const errorDiv = document.getElementById(errorDivId);
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.classList.remove('hidden');
+            } else {
+                 // Fallback if specific error div not found
+                 const generalErrorDiv = document.getElementById('general-error-message');
+                 generalErrorDiv.textContent = message;
+                 generalErrorDiv.classList.remove('hidden');
+            }
+        }
+
+        // --- Helper Function to hide all error messages ---
+        function hideAllErrorMessages() {
+            document.querySelectorAll('.error-message').forEach(el => el.classList.add('hidden'));
+        }
+
         const DLS_RESOURCES = [{"20":100,"15":85.1,"10":62.7,"5":33.5,"1":8.4},{"20":93.9,"15":79.8,"10":59.5,"5":32.4,"1":8.2},{"20":86.5,"15":73.1,"10":55.1,"5":30.7,"1":7.9},{"20":77.5,"15":65.1,"10":49.5,"5":28.3,"1":7.5},{"20":66.9,"15":56.1,"10":42.9,"5":25.1,"1":6.9},{"20":55.4,"15":46.4,"10":35.7,"5":21.4,"1":6.2},{"20":43.4,"15":36.5,"10":28.5,"5":17.5,"1":5.3},{"20":31.6,"15":26.8,"10":21.4,"5":13.6,"1":4.2},{"20":20.7,"15":17.8,"10":14.6,"5":9.6,"1":3.1},{"20":11.5,"15":10,"10":8.4,"5":5.8,"1":2}];
         function getResourcePercentage(overs, wickets) {
             if (wickets >= 10 || overs <= 0) return 0;
             const table = DLS_RESOURCES[wickets]; const keys = Object.keys(table).map(Number).sort((a,b)=>a-b);
-            if (table[overs]) return table[overs]; if (overs >= keys[keys.length-1]) return table[keys[keys.length-1]]; if (overs <= keys[0]) return table[keys[0]];
-            const l = Math.max(...keys.filter(k => k <= overs)), u = Math.min(...keys.filter(k => k >= overs));
-            // Prevent division by zero if l and u are the same (should be handled by boundary checks)
-             if (u - l === 0) return table[l]; 
-            return table[l] + (table[u] - table[l]) * (overs - l) / (u - l);
+            const oversFloat = parseFloat(overs); // Ensure it's a float for comparison
+            if (table[oversFloat]) return table[oversFloat]; // Check direct float key first
+            if (table[String(oversFloat)]) return table[String(oversFloat)]; // Check string key
+            if (oversFloat >= keys[keys.length-1]) return table[String(keys[keys.length-1])]; 
+            if (oversFloat <= keys[0]) return table[String(keys[0])];
+            const l = Math.max(...keys.filter(k => k <= oversFloat)), u = Math.min(...keys.filter(k => k >= oversFloat));
+             if (u - l === 0) return table[String(l)]; 
+             // Access table using string keys after finding numeric boundaries
+            return table[String(l)] + (table[String(u)] - table[String(l)]) * (oversFloat - l) / (u - l);
         }
+
 
         function animateCount(element, finalValue, { isPercentage = false, isFloat = false } = {}) {
             let start = 0, current = 0;
@@ -705,7 +774,6 @@ setInterval(checkBackendStatus, 8000);
                 if (!start) start = timestamp;
                 const progress = Math.min((timestamp - start) / duration, 1);
                 current = progress * finalValue;
-                 // Ensure non-negative values before displaying
                  current = Math.max(0, current); 
                 element.textContent = isFloat ? current.toFixed(2) : (isPercentage ? `${Math.floor(current)}%` : Math.floor(current));
                 if (progress < 1) window.requestAnimationFrame(step);
@@ -716,71 +784,77 @@ setInterval(checkBackendStatus, 8000);
 async function apiCall(endpoint, payload) {
   const logic = {
     predict_score: p => {
-      if (p.overs <= 0 || p.wickets >= 10)
+      // **BUG FIX: Handle 20 overs completed**
+      if (p.overs >= 20 || p.wickets >= 10) {
+        // Just return the current score as the final score
         return { low: p.score, avg: p.score, high: p.score };
+      }
+      
       const current_rate = p.score / p.overs;
       const remaining_overs = 20 - p.overs;
       const wickets_in_hand = 10 - p.wickets;
       
-      // Base projected rate adjusted for wickets left
       let projected_rate = current_rate * (1 + (wickets_in_hand * 0.04)); 
 
-      // Find pitch and weather impact factors
       const pitchImpact = cricketData.pitchTypes.find(pt => pt.type === p.pitch)?.impact || 0;
       const weatherImpact = cricketData.weatherConditions.find(wc => wc.label === p.weather)?.impact || 0;
       
-      // Apply impacts to the projected rate for remaining overs
-      // Make impacts additive/subtractive to the rate, not multiplicative on score
-      projected_rate = projected_rate + (pitchImpact * 10) + (weatherImpact * 10); // Scale impact for runs/over
-      projected_rate = Math.max(3, projected_rate); // Ensure minimum run rate projection
+      projected_rate = projected_rate + (pitchImpact * 10) + (weatherImpact * 10); 
+      projected_rate = Math.max(3, projected_rate); 
 
       const remaining_runs = remaining_overs * projected_rate;
       let avg = Math.ceil(p.score + remaining_runs);
       
-      // Blend with venue average, weighted towards current projection
       const venueData = cricketData.venues.find(v => v.name === p.venue);
       if (venueData) {
         avg = (avg * 0.8) + (venueData.avgScore * 0.2); 
       }
       
       avg = Math.ceil(avg);
-      // Ensure range is reasonable and low >= current score
-      const low = Math.max(p.score, Math.ceil(avg * 0.90)); // Narrower low range
-      const high = Math.ceil(avg * 1.10); // Narrower high range
+      
+      // **BUG FIX: Ensure low <= avg <= high**
+      const low = Math.max(p.score, Math.ceil(avg * 0.90)); 
+      // Ensure high is always at least avg
+      const high = Math.max(avg, Math.ceil(avg * 1.08)); 
+      // Recalculate avg if low ended up being higher after max(p.score)
+      const finalAvg = Math.max(low, avg); 
 
-      return { low, avg, high };
+      // Return consistent range, ensuring low <= avg <= high
+      return { low: low, avg: finalAvg, high: Math.max(finalAvg, high) }; 
     },
 
     win_probability: p => {
-        // Correct calculation for balls bowled from overs like 10.5
         const oversInt = Math.floor(p.overs);
         const ballsFraction = Math.round((p.overs - oversInt) * 10);
         const b = oversInt * 6 + ballsFraction; 
 
         const crr = p.overs > 0 ? p.score / p.overs : 0;
         
+        // **BUG FIX: Explicitly set win_prob to 0 if 20 overs done and score < target**
+        if ((p.wickets >= 10 || b >= 120) && p.score < p.target) {
+             return { win_prob: 0, rrr: Infinity, runs_needed: p.target - p.score, balls_left: 0, crr };
+        }
+        // Handle win condition
         if (p.score >= p.target)
-            return { win_prob: 100, rrr: 0, runs_needed: 0, balls_left: Math.max(0, 120 - b), crr }; // Ensure balls_left >= 0
-        if (p.wickets >= 10 || b >= 120)
-            return { win_prob: 0, rrr: Infinity, runs_needed: p.target - p.score, balls_left: Math.max(0, 120 - b), crr }; // Ensure balls_left >= 0
+            return { win_prob: 100, rrr: 0, runs_needed: 0, balls_left: Math.max(0, 120 - b), crr }; 
         
+        // Recalculate remaining variables only if game is still on
         const r = p.target - p.score;
         const bl = 120 - b;
-        const rrr = bl > 0 ? (r / bl) * 6 : Infinity; // Use Infinity if balls left is 0
+        const rrr = bl > 0 ? (r / bl) * 6 : Infinity; 
         
         let prob = 50 - (rrr - crr) * 10 + (10 - p.wickets) * 5;
         
         const pitchImpact = cricketData.pitchTypes.find(pt => pt.type === p.pitch)?.impact || 0;
         const weatherImpact = cricketData.weatherConditions.find(wc => wc.label === p.weather)?.impact || 0;
         
-        prob = prob * (1 + pitchImpact + weatherImpact); // Apply impact factors
+        prob = prob * (1 + pitchImpact + weatherImpact); 
         
-        // Ensure probability is within 1-99 range
         prob = Math.max(1, Math.min(99, prob)); 
 
         return {
             win_prob: Math.round(prob),
-            rrr: isFinite(rrr) ? rrr : 999.99, // Handle infinity for display
+            rrr: isFinite(rrr) ? rrr : 999.99, 
             runs_needed: r,
             balls_left: bl,
             crr
@@ -822,12 +896,13 @@ async function apiCall(endpoint, payload) {
 
 
         async function getScorePrediction() {
+            hideAllErrorMessages(); // Hide previous errors
             const scoreInput = document.getElementById('sp-score').value;
             const wicketsInput = document.getElementById('sp-wickets').value;
             const oversInput = document.getElementById('sp-overs').value;
             const venueInput = document.getElementById('sp-venue').value;
-            const pitchInput = document.getElementById('sp-pitch').value; // Get pitch
-            const weatherInput = document.getElementById('sp-weather').value; // Get weather
+            const pitchInput = document.getElementById('sp-pitch').value; 
+            const weatherInput = document.getElementById('sp-weather').value;
 
             const score = parseInt(scoreInput);
             const wickets = parseInt(wicketsInput);
@@ -836,22 +911,28 @@ async function apiCall(endpoint, payload) {
             const pitch = pitchInput; 
             const weather = weatherInput;
 
-            // Improved Validation - ensure all are selected/valid
             if (isNaN(score) || score < 0 ||
                 isNaN(wickets) || wickets < 0 || wickets > 10 ||
-                isNaN(overs) || overs < 0 || overs > 20 ||
+                isNaN(overs) || overs < 0 || overs > 20 || // Allow exactly 20 here for check below
                 !venueName || !pitch || !weather) { 
-                console.error("Invalid input for score prediction:", { score, wickets, overs, venueName, pitch, weather });
-                // Optionally provide user feedback here
+                showErrorMessage('score-predictor', "Invalid input. Please check all fields.");
+                document.getElementById('score-prediction-output').classList.add('hidden'); // Hide output on error
                 return; 
             }
+
+            // **BUG FIX: Handle 20 overs completed - Show Message**
+            if (overs === 20.0) {
+                 showErrorMessage('score-predictor', "Innings complete. Final score is " + score + ".");
+                 document.getElementById('score-prediction-output').classList.add('hidden'); // Hide prediction output
+                 return;
+            }
             
-            // Pass pitch and weather in payload
             const payload = { score, wickets, overs, venue: venueName, pitch, weather }; 
 
             const venue = cricketData.venues.find(v => v.name === venueName);
             if (!venue) {
-                console.error("Selected venue not found in data:", venueName);
+                showErrorMessage('score-predictor', "Selected venue data not found.");
+                document.getElementById('score-prediction-output').classList.add('hidden');
                 return; 
             }
             document.getElementById('sp-venue-avg').textContent = venue.avgScore;
@@ -859,7 +940,7 @@ async function apiCall(endpoint, payload) {
             
             const selectedWeather = cricketData.weatherConditions.find(w => w.label === weather);
             if (selectedWeather) {
-                 document.getElementById('sp-weather-impact').textContent = `${Math.round(((selectedWeather.impact || 0) + 1) * 100)}%`; // Round percentage
+                 document.getElementById('sp-weather-impact').textContent = `${Math.round(((selectedWeather.impact || 0) + 1) * 100)}%`; 
             } else {
                  document.getElementById('sp-weather-impact').textContent = `100%`; 
             }
@@ -869,18 +950,19 @@ async function apiCall(endpoint, payload) {
             document.getElementById('score-prediction-output').classList.remove('hidden'); 
             
             const result = await apiCall('predict_score', payload);
-            console.log("Score Prediction Result:", result); // Debug log
-            if (result && typeof result.low !== 'undefined') { // Check if result is valid
+            console.log("Score Prediction Result:", result); 
+            if (result && typeof result.low !== 'undefined') { 
                 animateCount(document.getElementById('sp-low'), result.low);
                 animateCount(document.getElementById('sp-avg'), result.avg);
                 animateCount(document.getElementById('sp-high'), result.high);
             } else {
-                 console.error("Invalid result received from predict_score", result);
-                 // Optionally display an error in the UI
+                 showErrorMessage('score-predictor', "Prediction failed. Please try again.");
+                 document.getElementById('score-prediction-output').classList.add('hidden');
             }
         }
         
         async function getWinProbability() {
+             hideAllErrorMessages(); // Hide previous errors
              const payload = {
                 target: parseInt(document.getElementById('wp-target').value), score: parseInt(document.getElementById('wp-score').value), 
                 wickets: parseInt(document.getElementById('wp-wickets').value), overs: parseFloat(document.getElementById('wp-overs').value),
@@ -888,33 +970,34 @@ async function apiCall(endpoint, payload) {
             };
 
             const numericPayload = { target: payload.target, score: payload.score, wickets: payload.wickets, overs: payload.overs };
-            // Enhanced Validation
+            
             if (Object.values(numericPayload).some(v => isNaN(v) || v < 0) || 
-                payload.wickets > 10 || payload.overs > 20 ||
+                payload.wickets > 10 || payload.overs > 20 || // Allow exactly 20 for checks
                 !payload.pitch || !payload.weather) {
-                console.error("Invalid input for win probability:", payload);
-                // Optionally show UI error
+                showErrorMessage('win-probability', "Invalid input. Please check all fields.");
+                 document.getElementById('win-probability-output').classList.add('hidden'); // Hide output
                 return;
             }
             
             document.getElementById('win-probability-output').classList.remove('hidden');
             const result = await apiCall('win_probability', payload);
-             console.log("Win Probability Result:", result); // Debug log
-            if (result && typeof result.win_prob !== 'undefined') { // Check result validity
+             console.log("Win Probability Result:", result); 
+            if (result && typeof result.win_prob !== 'undefined') { 
                 animateCount(document.getElementById('wp-runs-needed'), result.runs_needed);
                 animateCount(document.getElementById('wp-balls-left'), result.balls_left);
                 animateCount(document.getElementById('wp-crr'), result.crr, {isFloat: true});
-                // Display RRR correctly even if very high (instead of N/A)
+                
                 const rrrDisplay = (result.rrr > 999) ? "---" : result.rrr.toFixed(2);
-                document.getElementById('wp-rrr').textContent = rrrDisplay; // Direct set for high/inf RRR
-                if(isFinite(result.rrr) && result.rrr < 999) { // Animate only if finite and reasonable
+                document.getElementById('wp-rrr').textContent = rrrDisplay; 
+                if(isFinite(result.rrr) && result.rrr < 999) { 
+                    // Re-run animation if needed, or just ensure the static text is correct
                     animateCount(document.getElementById('wp-rrr'), result.rrr, {isFloat: true}); 
                 }
                 animateCount(document.getElementById('wp-percentage'), result.win_prob, {isPercentage: true});
                 updateWinProbabilityChart(result.win_prob);
             } else {
-                 console.error("Invalid result received from win_probability", result);
-                  // Optionally display an error in the UI
+                 showErrorMessage('win-probability', "Calculation failed. Please try again.");
+                 document.getElementById('win-probability-output').classList.add('hidden');
             }
         }
         
@@ -928,41 +1011,52 @@ async function apiCall(endpoint, payload) {
         }
 
         async function getDlsTarget() {
+             hideAllErrorMessages(); // Hide previous errors
             const payload = { team1_score: parseInt(document.getElementById('dls-t1-score').value), team1_overs: parseFloat(document.getElementById('dls-t1-overs').value) || 20, team2_overs: parseFloat(document.getElementById('dls-t2-overs').value), team2_wickets_lost: parseInt(document.getElementById('dls-t2-wickets').value) };
-            if (isNaN(payload.team1_score) || isNaN(payload.team2_overs) || isNaN(payload.team2_wickets_lost) || payload.team2_wickets_lost < 0 || payload.team2_wickets_lost > 10 ) return; // Added wicket validation
-            if(payload.team2_overs > payload.team1_overs || payload.team2_overs <= 0) return; // Added overs validation
+            if (isNaN(payload.team1_score) || isNaN(payload.team2_overs) || isNaN(payload.team2_wickets_lost) || payload.team2_wickets_lost < 0 || payload.team2_wickets_lost > 10 ) {
+                 showErrorMessage('dls-calculator', "Invalid input for DLS calculation.");
+                 document.getElementById('dls-output').classList.add('hidden');
+                 return;
+             }
+            if(payload.team2_overs > payload.team1_overs || payload.team2_overs <= 0) {
+                 showErrorMessage('dls-calculator', "Team 2 overs must be positive and not exceed Team 1 overs.");
+                 document.getElementById('dls-output').classList.add('hidden');
+                 return; 
+             }
             document.getElementById('dls-output').classList.remove('hidden');
             const result = await apiCall('dls_calculate', payload);
-             console.log("DLS Result:", result); // Debug log
-            if (result && typeof result.target !== 'undefined') { // Check result validity
+             console.log("DLS Result:", result); 
+            if (result && typeof result.target !== 'undefined') { 
                 animateCount(document.getElementById('dls-target'), result.target);
                 document.getElementById('dls-revised-overs').textContent = payload.team2_overs;
             } else {
-                 console.error("Invalid result received from dls_calculate", result);
-                 // Optionally display an error in the UI
+                 showErrorMessage('dls-calculator', "DLS calculation failed.");
+                 document.getElementById('dls-output').classList.add('hidden');
             }
         }
 
         function plotRunRateTrajectory() {
+            hideAllErrorMessages(); // Hide previous errors
             const score = parseInt(document.getElementById('rrt-score').value), oversDone = parseFloat(document.getElementById('rrt-overs').value);
-            if(isNaN(score) || isNaN(oversDone) || oversDone >= 20 || oversDone <= 0) return;
+            if(isNaN(score) || isNaN(oversDone) || oversDone >= 20 || oversDone <= 0) {
+                 showErrorMessage('run-rate', "Invalid input for Run Rate Trajectory.");
+                 document.getElementById('run-rate-output').classList.add('hidden');
+                 return;
+            }
             document.getElementById('run-rate-output').classList.remove('hidden');
             const crr = score / oversDone;
-            // Ensure labels start from the next whole over if mid-over
             const startOver = Math.floor(oversDone) + 1; 
-            const labels = Array.from({length: 20 - startOver + 1}, (_, i) => startOver + i); // +1 to include 20th over
+            const labels = Array.from({length: 20 - startOver + 1}, (_, i) => startOver + i); 
             
-             // Calculate projected scores based on whole overs
             const projected = labels.map(o => Math.round(score + (o - oversDone) * crr));
             
-             // Prepend current score at current over for smoother start
             labels.unshift(oversDone.toFixed(1)); 
             projected.unshift(score); 
 
             if (charts.rrt) charts.rrt.destroy();
             const ctx = document.getElementById('run-rate-chart').getContext('2d');
             charts.rrt = new Chart(ctx, {
-                type: 'line', data: { labels, datasets: [{ label: 'Projected Score', data: projected, borderColor: 'var(--primary-blue)', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.1 }] }, // Reduced tension for less curve
+                type: 'line', data: { labels, datasets: [{ label: 'Projected Score', data: projected, borderColor: 'var(--primary-blue)', backgroundColor: 'rgba(59, 130, 246, 0.2)', fill: true, tension: 0.1 }] }, 
                 options: { responsive: true, plugins: { legend: { labels: { color: '#e2e8f0' } } }, scales: { y: { beginAtZero: true, ticks:{color:'#94a3b8'}, grid:{color:'var(--border-color)'}, title:{display:true,text:'Projected Score',color:'#e2e8f0'}}, x: { ticks:{color:'#94a3b8'}, grid:{color:'var(--border-color)'}, title:{display:true,text:'Overs',color:'#e2e8f0'}}}}
             });
         }
@@ -971,7 +1065,7 @@ async function apiCall(endpoint, payload) {
             const r = { b:0, bo:0, ar:0, wk:0, bc:0, boc:0, arc:0, wkc:0 };
             squad.forEach(name => { 
                 const p = teamData.players.find(pl => pl.name === name); 
-                if(!p) { console.warn(`Player not found: ${name} in team ${teamData.name}`); return; } // Add warning
+                if(!p) { console.warn(`Player not found: ${name} in team ${teamData.name}`); return; } 
                 switch(p.role){ 
                     case 'Batsman':r.b+=p.form;r.bc++;break; 
                     case 'Bowler':r.bo+=p.form;r.boc++;break; 
