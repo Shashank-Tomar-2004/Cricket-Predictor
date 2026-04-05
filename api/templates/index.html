@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cricket Predictor Pro</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+</head>
+<body>
+  <div id="toast" class="toast hidden"></div>
+  <main class="page-wrap">
+    <header class="hero">
+      <canvas id="hero-3d-canvas" class="hero-3d-canvas"></canvas>
+      <div class="hero-content">
+        <div class="hero-icon">🏆</div>
+        <h1>Cricket Predictor Pro</h1>
+        <p>The Ultimate T20 & ODI Prediction and Analysis Engine</p>
+        <div class="format-switch">
+          <button class="fmt-btn active" data-format="odi">ODI</button>
+          <button class="fmt-btn" data-format="t20">T20</button>
+        </div>
+        <div class="mode-switch">
+          <button id="mode-manual-btn" class="mode-btn active" data-mode="manual">Manual Mode</button>
+          <button id="mode-auto-btn" class="mode-btn" data-mode="auto">Automatic Live Mode</button>
+        </div>
+        <label class="beginner-toggle">
+          <input id="beginner-toggle" type="checkbox" checked />
+          Beginner Explanations
+        </label>
+        <button id="presentation-btn" class="primary-btn presentation-btn">Presentation Mode</button>
+        <div id="backend-status" class="backend-pill">Checking backend...</div>
+      </div>
+    </header>
+
+    <section class="shell-card">
+      <h2>Match Setup</h2>
+      <div id="team-grid" class="team-grid"></div>
+      <div class="error" id="setup-error"></div>
+    </section>
+
+    <section id="xi-section" class="shell-card hidden">
+      <h2>Select Playing XI</h2>
+      <div class="split-2">
+        <article class="team-panel">
+          <h3 id="xi-team1-title">Team 1</h3>
+          <p id="xi-team1-count" class="muted">0/11 selected</p>
+          <div id="xi-team1-list" class="players-list"></div>
+          <div id="xi-team1-suggestions" class="warn mt-12"></div>
+        </article>
+        <article class="team-panel">
+          <h3 id="xi-team2-title">Team 2</h3>
+          <p id="xi-team2-count" class="muted">0/11 selected</p>
+          <div id="xi-team2-list" class="players-list"></div>
+          <div id="xi-team2-suggestions" class="warn mt-12"></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="dashboard" class="shell-card hidden">
+      <h2>Predictor Dashboard</h2>
+      <nav class="dash-tabs">
+        <button class="tab-btn active" data-tab="score-tab">Score</button>
+        <button class="tab-btn" data-tab="live-tab">Live</button>
+        <button class="tab-btn" data-tab="explain-tab">Explainability</button>
+        <button class="tab-btn" data-tab="backtest-tab">Backtest</button>
+        <button class="tab-btn" data-tab="win-tab">Win %</button>
+        <button class="tab-btn" data-tab="form-tab">Form</button>
+        <button class="tab-btn" data-tab="dls-tab">DLS</button>
+      </nav>
+
+      <div class="tab-body">
+        <section id="live-tab" class="tab-panel hidden">
+          <div class="grid-3">
+            <label>Match Link<input id="live-url" type="text" placeholder="Paste Cricbuzz match link" /></label>
+          </div>
+          <details id="live-advanced-wrap" class="mt-12">
+            <summary>Advanced options (only if normal link paste fails)</summary>
+            <div class="grid-3 mt-12">
+              <label>Data Provider<select id="live-provider"></select></label>
+              <label>API Key (optional)<input id="live-api-key" type="text" placeholder="Only needed for some JSON providers" /></label>
+              <label>Root Path (optional)<input id="live-root-path" type="text" placeholder="data.match" /></label>
+              <label>Field Mapping (optional)
+                <textarea id="live-field-map" rows="4" placeholder='{"team1":["match.home.name"],"team2":["match.away.name"],"score":["innings.0.runs"]}'></textarea>
+              </label>
+            </div>
+          </details>
+          <button id="live-ingest-btn" class="primary-btn">Load Live Match</button>
+          <p id="live-help" class="muted">Tip: Paste one Cricbuzz match link and click Load Live Match.</p>
+          <p id="live-status" class="note">Live ingestion status will appear here.</p>
+          <div id="live-error" class="error"></div>
+          <article class="team-panel compact mt-12">
+            <h3>Supported Teams Fixtures (10 Men's Teams)</h3>
+            <p class="muted">Click "Use Fixture" to auto-select teams for pre-match analysis (home/away).</p>
+            <div id="live-fixtures" class="fixtures-list"></div>
+          </article>
+          <article class="team-panel compact mt-12">
+            <h3>Live Playing XI</h3>
+            <div class="split-2">
+              <div id="live-xi-team1" class="live-xi-box">Team 1 XI will appear here.</div>
+              <div id="live-xi-team2" class="live-xi-box">Team 2 XI will appear here.</div>
+            </div>
+          </article>
+          <article class="team-panel compact mt-12">
+            <h3>Live Squads (From Live Page)</h3>
+            <div class="split-2">
+              <div id="live-raw-team1" class="live-xi-box">Fetched squad for Team 1 will appear here.</div>
+              <div id="live-raw-team2" class="live-xi-box">Fetched squad for Team 2 will appear here.</div>
+            </div>
+          </article>
+          <article class="team-panel compact mt-12">
+            <h3>Live Match Snapshot</h3>
+            <label>Innings View
+              <select id="live-innings-view">
+                <option value="both">Both Teams</option>
+              </select>
+            </label>
+            <label>Manhattan Detail
+              <select id="live-manhattan-mode">
+                <option value="auto">Auto</option>
+                <option value="over">Per Over</option>
+                <option value="block5">5-Over Blocks</option>
+              </select>
+            </label>
+            <div id="live-snapshot" class="stats-row">
+              <div class="stat"><span>Format</span><strong id="live-format">-</strong></div>
+              <div class="stat"><span>Current Innings</span><strong id="live-current-innings">-</strong></div>
+              <div class="stat"><span>Toss</span><strong id="live-toss">-</strong></div>
+              <div class="stat"><span>Venue</span><strong id="live-venue">-</strong></div>
+            </div>
+          </article>
+          <article class="team-panel compact mt-12">
+            <h3>Quick Match Insights</h3>
+            <div class="stats-row">
+              <div class="stat"><span>Data Quality</span><strong id="live-data-quality">-</strong></div>
+              <div class="stat"><span>Confidence</span><strong id="live-confidence">-</strong></div>
+              <div class="stat"><span>Pressure Meter</span><strong id="live-pressure">-</strong></div>
+            </div>
+            <div class="split-2 mt-12">
+              <div class="chart-box compact-chart live-confidence-tall"><canvas id="live-confidence-chart"></canvas></div>
+              <div class="chart-box compact-chart live-momentum-tall"><canvas id="live-momentum-chart"></canvas></div>
+            </div>
+            <div class="split-2 mt-12">
+              <article class="team-panel compact">
+                <h3>Partnership Impact</h3>
+                <div id="live-partnership-impact" class="phase-grid"></div>
+              </article>
+              <article class="team-panel compact">
+                <h3>Bowler Matchups</h3>
+                <div id="live-bowler-matchups" class="phase-grid"></div>
+              </article>
+            </div>
+            <article class="team-panel compact mt-12">
+              <h3>Coach Notes</h3>
+              <ul id="live-coach-notes" class="plain-list"></ul>
+            </article>
+          </article>
+          <article class="team-panel compact mt-12">
+            <h3>Worm Graph</h3>
+            <div class="chart-box compact-chart live-worm-tall"><canvas id="live-worm-chart"></canvas></div>
+          </article>
+          <article class="team-panel compact mt-12">
+            <h3>Run Rate Graph</h3>
+            <div class="chart-box compact-chart live-rr-tall"><canvas id="live-rr-chart"></canvas></div>
+          </article>
+          <article class="team-panel compact mt-12">
+            <h3>Wicket Fall Timeline</h3>
+            <div class="chart-box compact-chart live-wicket-tall"><canvas id="live-wicket-chart"></canvas></div>
+          </article>
+          <article class="team-panel compact mt-12">
+            <h3>Live Win Probability</h3>
+            <div class="chart-box compact-chart live-wicket-tall"><canvas id="live-winprob-chart"></canvas></div>
+            <p id="live-winprob-note" class="muted">Shows who is ahead over time: higher % means stronger winning position at that over.</p>
+          </article>
+          <div class="split-2 live-manhattan-breakdown mt-12">
+            <article class="team-panel compact">
+              <h3>Over Manhattan</h3>
+              <div class="chart-box compact-chart live-manhattan-tall"><canvas id="live-manhattan-chart"></canvas></div>
+            </article>
+            <article class="team-panel compact">
+              <h3>Runs by Match Phase</h3>
+              <div id="live-breakdown"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="score-tab" class="tab-panel">
+          <div class="grid-3">
+            <label>Batting Team<select id="score-batting-team"></select></label>
+            <label>Toss Winner<select id="score-toss-winner"></select></label>
+            <label>Toss Decision
+              <select id="score-toss-decision">
+                <option value="auto">Auto</option>
+                <option value="bat">Bat First</option>
+                <option value="bowl">Bowl First</option>
+              </select>
+            </label>
+            <label>Venue Region<select id="score-venue-region"></select></label>
+            <label>Venue Country<select id="score-venue-country"></select></label>
+            <label>Venue<select id="score-venue"></select></label>
+            <label>Pitch<select id="score-pitch"></select></label>
+            <label>Weather<select id="score-weather"></select></label>
+            <label>Current Score<input id="score-runs" type="number" min="0" placeholder="e.g. 145" /></label>
+            <label>Wickets Lost<input id="score-wickets" type="number" min="0" max="10" placeholder="e.g. 4" /></label>
+            <label>Overs (x.y)<input id="score-overs" type="number" step="0.1" placeholder="e.g. 17.2" /></label>
+          </div>
+          <div class="preset-row mt-12">
+            <button class="preset-btn" data-preset="flat">Flat Batting Day</button>
+            <button class="preset-btn" data-preset="seam">Green Seam Evening</button>
+            <button class="preset-btn" data-preset="spin">Dry Spin Surface</button>
+            <button class="preset-btn" data-preset="dew">Heavy Dew Chase</button>
+          </div>
+          <button id="score-btn" class="primary-btn">Predict Final Score</button>
+          <div class="stats-row">
+            <div class="stat"><span>Low</span><strong id="score-low">-</strong></div>
+            <div class="stat"><span>Average</span><strong id="score-avg">-</strong></div>
+            <div class="stat"><span>High</span><strong id="score-high">-</strong></div>
+            <div class="stat"><span>Venue Par</span><strong id="score-par">-</strong></div>
+          </div>
+          <div id="score-phase-breakdown" class="phase-grid mt-12"></div>
+          <div id="score-advanced-insights" class="insight-grid mt-12"></div>
+          <div class="trajectory-layout mt-12">
+            <div class="trajectory-controls">
+              <label>Trajectory Score<input id="rr-score" type="number" min="0" /></label>
+              <label>Trajectory Wickets<input id="rr-wickets" type="number" min="0" max="10" /></label>
+              <label>Trajectory Overs (x.y)<input id="rr-overs" type="number" step="0.1" /></label>
+              <label>Trajectory Target (optional)<input id="rr-target" type="number" min="1" /></label>
+              <button id="rr-btn" class="primary-btn">Update Trajectory</button>
+              <div id="rr-error" class="error"></div>
+            </div>
+            <div class="chart-box compact-chart"><canvas id="rr-chart"></canvas></div>
+          </div>
+          <div class="chart-box"><canvas id="uncertainty-chart"></canvas></div>
+          <button id="repro-pdf-btn" class="primary-btn mt-12">Download Reproducibility PDF</button>
+          <button id="score-confidence-btn" class="primary-btn mt-12">Refresh Confidence Gauge</button>
+          <div class="chart-box compact-chart live-confidence-tall"><canvas id="score-confidence-chart"></canvas></div>
+          <div class="split-2 mt-12">
+            <article class="team-panel compact">
+              <h3>Toss Strategy Simulator</h3>
+              <p id="toss-sim-note" class="note">Run prediction to compare toss choices.</p>
+              <div class="chart-box compact-chart"><canvas id="toss-sim-chart"></canvas></div>
+            </article>
+            <article class="team-panel compact">
+              <h3>Innings Planner</h3>
+              <p class="muted">Simple checkpoints to guide innings pacing.</p>
+              <div id="innings-plan" class="phase-grid"></div>
+            </article>
+          </div>
+          <p id="score-note" class="note">Prediction insight will appear here.</p>
+          <div id="score-error" class="error"></div>
+          <div id="score-warning" class="warn"></div>
+        </section>
+
+        <section id="win-tab" class="tab-panel hidden">
+          <div class="grid-3">
+            <label>Chasing Team<select id="win-chasing-team"></select></label>
+            <label>Toss Winner<select id="win-toss-winner"></select></label>
+            <label>Toss Decision
+              <select id="win-toss-decision">
+                <option value="auto">Auto</option>
+                <option value="bat">Bat First</option>
+                <option value="bowl">Bowl First</option>
+              </select>
+            </label>
+            <label>Target<input id="win-target" type="number" min="1" placeholder="e.g. 284" /></label>
+            <label>Current Score<input id="win-runs" type="number" min="0" placeholder="e.g. 172" /></label>
+            <label>Wickets Lost<input id="win-wickets" type="number" min="0" max="10" placeholder="e.g. 5" /></label>
+            <label>Overs (x.y)<input id="win-overs" type="number" step="0.1" placeholder="e.g. 31.4" /></label>
+          </div>
+          <button id="win-btn" class="primary-btn">Calculate Win %</button>
+          <div class="slider-box mt-12">
+            <h4>Live What-If Sliders</h4>
+            <div class="grid-3">
+              <label>Target <input id="win-target-slider" type="range" min="1" max="450" value="250" /></label>
+              <label>Score <input id="win-score-slider" type="range" min="0" max="450" value="120" /></label>
+              <label>Wickets <input id="win-wickets-slider" type="range" min="0" max="10" value="4" /></label>
+            </div>
+          </div>
+          <div class="split-2 mt-12">
+            <div class="stat-card">
+              <canvas id="win-donut"></canvas>
+              <p class="center-metric" id="win-percent">-</p>
+            </div>
+            <div class="stats-col">
+              <div class="stat"><span>Runs Needed</span><strong id="win-runs-needed">-</strong></div>
+              <div class="stat"><span>Balls Left</span><strong id="win-balls-left">-</strong></div>
+              <div class="stat"><span>Current RR</span><strong id="win-crr">-</strong></div>
+              <div class="stat"><span>Required RR</span><strong id="win-rrr">-</strong></div>
+              <div class="stat"><span>XI Balance</span><strong id="win-xi">-</strong></div>
+            </div>
+          </div>
+          <article class="team-panel compact mt-12">
+            <h3>Win Timeline Explorer</h3>
+            <label>View at Over <input id="win-over-slider" type="range" min="1" max="50" value="10" /></label>
+            <div class="chart-box compact-chart"><canvas id="win-timeline-chart"></canvas></div>
+            <p id="win-timeline-note" class="note">Move slider to understand how win chance changes with overs.</p>
+          </article>
+          <div id="win-error" class="error"></div>
+          <div id="win-warning" class="warn"></div>
+        </section>
+
+        <section id="explain-tab" class="tab-panel hidden">
+          <div class="split-2">
+            <article class="team-panel compact">
+              <h3>Explainability (Beginner Friendly)</h3>
+              <p class="muted">Simple meaning: this shows why the model pushed the score up or down.</p>
+              <button id="explain-btn" class="primary-btn">Generate Explanation</button>
+              <div id="explain-error" class="error"></div>
+            </article>
+            <article class="team-panel compact">
+              <h3>Summary</h3>
+              <p id="explain-storyline" class="note">Run score prediction, then generate explanation.</p>
+              <div class="stats-row">
+                <div class="stat"><span>Low</span><strong id="explain-low">-</strong></div>
+                <div class="stat"><span>Avg</span><strong id="explain-avg">-</strong></div>
+                <div class="stat"><span>High</span><strong id="explain-high">-</strong></div>
+                <div class="stat"><span>Confidence</span><strong id="explain-confidence">-</strong></div>
+              </div>
+            </article>
+          </div>
+          <div class="chart-box"><canvas id="explain-chart"></canvas></div>
+          <div id="explain-top-drivers" class="phase-grid mt-12"></div>
+        </section>
+
+        <section id="backtest-tab" class="tab-panel hidden">
+          <div class="split-2">
+            <article class="team-panel compact">
+              <h3>Backtest (Beginner Friendly)</h3>
+              <p class="muted">Simple meaning: this checks how close model predictions are to actual scores.</p>
+              <button id="backtest-btn" class="primary-btn">Run Backtest</button>
+              <div id="backtest-error" class="error"></div>
+            </article>
+            <article class="team-panel compact">
+              <h3>Metrics</h3>
+              <div class="stats-row">
+                <div class="stat"><span>Samples</span><strong id="backtest-samples">-</strong></div>
+                <div class="stat"><span>MAE</span><strong id="backtest-mae">-</strong></div>
+                <div class="stat"><span>RMSE</span><strong id="backtest-rmse">-</strong></div>
+                <div class="stat"><span>In Range %</span><strong id="backtest-calib">-</strong></div>
+              </div>
+              <p id="backtest-notes" class="note"></p>
+            </article>
+          </div>
+          <div class="split-2">
+            <div class="chart-box"><canvas id="backtest-scatter"></canvas></div>
+            <div class="chart-box"><canvas id="backtest-phase"></canvas></div>
+          </div>
+        </section>
+
+        <section id="form-tab" class="tab-panel hidden">
+          <div class="split-2">
+            <div class="team-compare-mini" id="form-team1">-</div>
+            <div class="team-compare-mini" id="form-team2">-</div>
+          </div>
+          <div class="viz-grid">
+            <div class="chart-box"><canvas id="form-radar"></canvas></div>
+            <div class="chart-box"><canvas id="form-bar"></canvas></div>
+            <div class="chart-box"><canvas id="form-win"></canvas></div>
+          </div>
+          <div class="split-2 mt-12">
+            <div class="chart-box"><canvas id="form-heatmap"></canvas></div>
+            <div class="chart-box"><canvas id="form-partnership"></canvas></div>
+          </div>
+          <p id="form-insight" class="note">Refresh comparison to see form edge.</p>
+          <button id="form-refresh" class="primary-btn mt-12">Refresh Team Comparison</button>
+          <div id="form-error" class="error"></div>
+        </section>
+
+        <section id="dls-tab" class="tab-panel hidden">
+          <div class="split-2">
+            <article class="team-panel compact">
+              <h3>Team 1 (Batting First)</h3>
+              <label>Final Score<input id="dls-score" type="number" min="1" /></label>
+              <label>Overs Faced<input id="dls-o1" type="number" step="0.1" /></label>
+            </article>
+            <article class="team-panel compact">
+              <h3>Team 2 (Chasing)</h3>
+              <label>Scheduled Overs<input id="dls-o2" type="number" step="0.1" /></label>
+              <label>Wickets Now<input id="dls-w" type="number" min="0" max="10" /></label>
+              <label>Play Stopped At Over (optional)<input id="dls-stop-over" type="number" step="0.1" /></label>
+              <label>Wickets at Stoppage (optional)<input id="dls-stop-w" type="number" min="0" max="10" /></label>
+              <label>Revised Total Overs (optional)<input id="dls-rev-over" type="number" step="0.1" /></label>
+            </article>
+          </div>
+          <button id="dls-btn" class="primary-btn">Calculate DLS Target</button>
+          <div class="stats-row">
+            <div class="stat"><span>Target</span><strong id="dls-target">-</strong></div>
+            <div class="stat"><span>Par (Tie)</span><strong id="dls-par">-</strong></div>
+            <div class="stat"><span>Resource T1</span><strong id="dls-r1">-</strong></div>
+            <div class="stat"><span>Resource T2</span><strong id="dls-r2">-</strong></div>
+          </div>
+          <p id="dls-explain" class="note">DLS in one line: target changes based on resources left (overs + wickets).</p>
+          <div class="dls-viz-grid">
+            <div class="chart-box dls-chart"><canvas id="dls-resource-chart"></canvas></div>
+            <div class="chart-box dls-chart"><canvas id="dls-target-chart"></canvas></div>
+          </div>
+          <div id="dls-error" class="error"></div>
+          <div id="dls-warning" class="warn"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <div id="presentation-overlay" class="presentation-overlay hidden">
+    <div class="presentation-panel">
+      <h3 id="presentation-title">Presentation Mode</h3>
+      <p id="presentation-text">Guided mode is active.</p>
+      <div class="presentation-actions">
+        <button id="presentation-next" class="primary-btn">Next</button>
+        <button id="presentation-exit" class="primary-btn">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
